@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "417574376183",
+    "project_id": "golden-ticket-bf026",
+    "storage_bucket": "golden-ticket-bf026.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417574376183:android:e8bb079e703d1b0e9439f2",
+        "android_client_info": {
+          "package_name": "com.golenticket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkPOvR1B_S8Cgvwv9Ai-mxVKImlFsTaTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
