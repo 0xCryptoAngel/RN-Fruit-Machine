@@ -3,7 +3,7 @@ import { View, StyleSheet, Image, Animated, Button, Text } from 'react-native';
 import AnimatedCounter from './AnimatedCounter';
 import { ImageButton } from '../buttons';
 import { ImageText, CoinText } from '../text';
-import { ShopDialog } from '../dialogs';
+import { ShopDialog, InviteDialog } from '../dialogs';
 
 const initialY = 0;
 const fruitWidth = 100, fruitHeight = 100, fruitCount = 8;
@@ -55,6 +55,7 @@ const fruitList = [
 const FruitMachine = () => {
     const [spinning, setSpinning] = useState(false);
     const [isVisible, setVisible] = useState(false);
+    const [isVisibleInvite, setVisibleInvite] = useState(false);
 
     const [fruitMachine, setFruitMachine]: any = useState({ // has 3 slots
         slot0: 0,// current number in slot data
@@ -170,6 +171,11 @@ const FruitMachine = () => {
             })
         }
     }
+    const onInvite =async (params: any) => {
+        console.log('invite dialog', params);
+        setVisibleInvite(false);
+        
+    }
     return (
         <View style={styles.container}>
             <View style={styles.slotsContainer}>
@@ -196,8 +202,10 @@ const FruitMachine = () => {
                 </View>
             </View>
             <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} />
-            <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 20, }} />
+            <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 10, }} />
+            <ImageButton title={"EARNING"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} />
             <ShopDialog isOpen={isVisible} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
+            <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
         </View>
     );
 };
