@@ -5,7 +5,8 @@ import { useLinkTo } from '@react-navigation/native';
 import { useAppSettings } from '../components/AppSettings';
 import { ImageButton } from '../components/buttons';
 import { FruitMachine } from '../components/fruit-machine';
-const backgroundUri = 'https://res.cloudinary.com/dbrqh9owb/image/upload/v1707151370/default/simple-back.png';
+// const backgroundUri = 'https://res.cloudinary.com/dbrqh9owb/image/upload/v1707151370/default/simple-back.png';
+const background = require('../../static/assets/game-background.jpg');
 function Game() {
     const theme = useTheme();
     const appSettings = useAppSettings();
@@ -13,7 +14,7 @@ function Game() {
 
     return (
         <Fragment>
-            <ImageBackground style={styles.container} source={{ uri: backgroundUri }}>
+            <ImageBackground style={styles.container} source={background}>
                 <FruitMachine />
             </ImageBackground>
         </Fragment>

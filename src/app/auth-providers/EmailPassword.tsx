@@ -27,6 +27,7 @@ function EmailPassword(): JSX.Element {
     } catch (e) {
       setLoading(false);
       const error = e as FirebaseAuthTypes.PhoneAuthError;
+      console.log(e);
       Alert.alert(
         appSettings.t('login-error'),
         appSettings.t(error.code ?? 'unknownError'),

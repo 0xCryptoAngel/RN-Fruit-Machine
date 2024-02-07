@@ -6,13 +6,13 @@ import { useLinkTo } from '@react-navigation/native';
 import { useAppSettings } from '../AppSettings';
 
 const backgroundUri = 'https://res.cloudinary.com/dbrqh9owb/image/upload/v1707150254/default/button.png';
-function ImageButton({ background, title, onPress }: any) {
+function ImageButton({ background, title, onPress , style }: any) {
     const theme = useTheme();
     const appSettings = useAppSettings();
     const linkTo = useLinkTo();
 
     return (
-        <TouchableOpacity style={styles.button} onPress={()=> onPress && onPress()}>
+        <TouchableOpacity style={[styles.button, style]} onPress={()=> onPress && onPress()}>
             <ImageBackground style={styles.container} source={{ uri: background }}>
                 <Text style={styles.title} >
                     { title || 'Image Button'}
@@ -24,8 +24,9 @@ function ImageButton({ background, title, onPress }: any) {
 
 const styles = StyleSheet.create({
     button: {
-        width: 300,
+        width: '100%',
         height: 50,
+        paddingHorizontal: 20,
         borderRadius: 25,
         backgroundColor: '#00b23a',
         borderWidth: 5,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         color: '#fff',
-        fontFamil: 'Roboto',
+        fontFamily: 'Roboto',
         fontWeight: 'bold',
     }});
 

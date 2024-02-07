@@ -5,7 +5,7 @@ import { useLinkTo } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppSettings } from '../components/AppSettings';
 import { ImageButton } from '../components/buttons';
-const backgroundUri = 'https://res.cloudinary.com/dbrqh9owb/image/upload/v1707147959/default/fruit-machine.jpg';
+const background = require('../../static/assets/golden_splash.jpg');
 function Home() {
     const theme = useTheme();
     const appSettings = useAppSettings();
@@ -13,12 +13,9 @@ function Home() {
     const navigation: any = useNavigation();
     return (
         <Fragment>
-        
-            <ImageBackground style={styles.container} source={{ uri: backgroundUri }}>
-
-                <ImageButton  title={"Play"} onPress={()=> navigation.navigate('Game')}/>
-                <View style={[styles.divider, { backgroundColor: theme.colors.primary }]} />
-
+            <ImageBackground style={styles.container} source={background}>
+                <ImageButton  title={"Play"} onPress={()=> navigation.navigate('Game')} style={{ marginVertical: 10,}}/>
+                <ImageButton  title={"Settings"} onPress={()=> navigation.navigate('Settings')} style={{ marginBottom: 30,}}/>
             </ImageBackground>
         </Fragment>
     );

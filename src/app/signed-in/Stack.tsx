@@ -58,10 +58,15 @@ const SignedIn = () => {
         component={ProfileStack}
         options={{ headerShown: false, title: appSettings.t('userInfo') }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="Game"
         component={Game}
         options={{ headerShown: false, title: appSettings.t('Game') }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={Settings}
+        options={{ headerShown: false, title: appSettings.t('Settings') }}
       />
 
     </Stack.Navigator>

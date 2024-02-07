@@ -13,8 +13,8 @@ function CoinText({ background, title, onPress }: any) {
 
     return (
         <View style={{
-            flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderRadius: 3,
-            borderColor: '#7cd4de', paddingHorizontal: 5, paddingVertical: 5,
+            flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderWidth: 0, borderRadius: 2,
+            borderColor: '#7cd4de', paddingHorizontal: 10, paddingVertical: 5,
         }}>
             <Image style={styles.image} source={background} resizeMode='contain' />
             <Text style={styles.title} >
