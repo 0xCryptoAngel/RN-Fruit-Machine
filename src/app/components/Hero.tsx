@@ -1,4 +1,4 @@
-import {Image, SafeAreaView, StyleSheet, View, ViewStyle} from 'react-native';
+import {Image, SafeAreaView, StyleSheet, View, ViewStyle, ImageSourcePropType} from 'react-native';
 
 interface Props {
   children?: React.ReactNode | React.ReactNode[];
@@ -13,9 +13,7 @@ function Hero({image, height, children, style}: Props): JSX.Element {
       {!!image && (
         <Image
           style={[styles.absolute, styles.image]}
-          source={{
-            uri: image,
-          }}
+          source={image as ImageSourcePropType}
         />
       )}
       <SafeAreaView style={[styles.absolute, styles.fadedImage]}>

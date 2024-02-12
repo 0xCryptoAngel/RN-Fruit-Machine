@@ -20,7 +20,7 @@ function SignIn() {
       <Hero
         height={300}
         image={
-          'https://images.unsplash.com/photo-1555099962-4199c345e5dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80'
+          require('../../static/assets/golden_splash.jpg')
         }>
         <EmailPassword />
       </Hero>

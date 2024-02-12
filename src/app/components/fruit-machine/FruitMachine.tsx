@@ -104,11 +104,11 @@ const FruitMachine = () => {
     useEffect(() => {
         // Generate new slot data with shuffled numbers
         const newSlotData = slotData.map(subArray => shuffleArray([...subArray]));
-        // setSlotData(newSlotData);
+        setSlotData(newSlotData);
     }, []);
 
     const handleSpinResult = async (machineStatus: any) => {
-        console.log(machineStatus, slotData[0][machineStatus.slot0], slotData[1][machineStatus.slot1], slotData[2][machineStatus.slot2]);
+        // console.log(machineStatus, slotData[0][machineStatus.slot0], slotData[1][machineStatus.slot1], slotData[2][machineStatus.slot2]);
         const fruitOfslot0 = slotData[0][machineStatus.slot0],
             fruitOfslot1 = slotData[1][machineStatus.slot1],
             fruitOfslot2 = slotData[2][machineStatus.slot2];
@@ -116,7 +116,7 @@ const FruitMachine = () => {
         const fruitData1 = fruitList[fruitOfslot1];
         const fruitData2 = fruitList[fruitOfslot2];
 
-        console.log(fruitData0.name, fruitData1.name, fruitData2.name);
+        console.log(`${fruitData0.name}, ${fruitData1.name}, ${fruitData2.name}`);
 
         setPlayerData({
             ...playerData,
@@ -133,11 +133,16 @@ const FruitMachine = () => {
         animations.forEach((anim, index) => {
             anim.setValue(initialY[index]);
 
-            const randomNumber = Math.ceil(Math.random() * fruitCount);
-            const randomSpin = randomNumber * fruitHeight;
-            const finalPosition = -randomSpin;
+            let randomNumber = Math.ceil(Math.random() * (fruitCount - 1));
+            let finalPosition = -randomNumber * fruitHeight;
+            if( finalPosition == initialY[index]) {
+                randomNumber += 2;
+                finalPosition = -randomNumber * fruitHeight;
+            }
             currentSlotY[index] = finalPosition;
-            slotStatus[`slot${index}`] = (fruitMachine[`slot${index}`] + randomNumber) % fruitCount;
+           
+            // slotStatus[`slot${index}`] = (fruitMachine[`slot${index}`] + randomNumber) % fruitCount;
+            slotStatus[`slot${index}`] = (randomNumber + 1) % fruitCount;
             Animated.timing(anim, {
                 toValue: finalPosition,
                 duration: 500 + (index * 200),
@@ -215,25 +220,21 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         alignItems: 'center',
-        // justifyContent: 'center',
         paddingHorizontal: 10,
-        paddingVertical: 30,
+        paddingBottom: 30,
         borderRadius: 4,
     },
     slotsContainer: {
         flexDirection: 'row',
         height: 300,
         overflow: 'hidden',
-        marginVertical: 30,
+        marginVertical: 10,
         borderRadius: 5,
         borderWidth: 5,
         borderColor: '#78039a',
     },
     slot: {
         width: 100,
-        // overflow: 'hidden', 
-        // borderColor: '#999', 
-        // borderWidth: 2,
     },
     fruitImage: {
         width: 100,

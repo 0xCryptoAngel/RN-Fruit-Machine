@@ -75,9 +75,7 @@ function EmailPassword(): JSX.Element {
     <View style={styles.form}>
       <Image
         style={styles.icon}
-        source={{
-          uri: 'https://storage.googleapis.com/static.invertase.io/assets/React-Native-Firebase.png',
-        }}
+        source={require('../../static/assets/golden-ticket.jpg')}
       />
       <TextInput
         value={email}

@@ -10,6 +10,8 @@ import ImageSpin25 from '../../../static/assets/spin25.png'
 import ImageSpin75 from '../../../static/assets/spin75.png'
 import ImageSpin200 from '../../../static/assets/spin200.png'
 import { ImageButton } from '../buttons';
+import { Divider } from '../dividers';
+
 const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
 
     const spinItems = [
@@ -79,6 +81,7 @@ const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
                                 ))
                             }
                         </View>
+                        <Divider />
                         <View style={styles.buyCoins}>
                             {
                                 coinItems.map((item: any, index: number) => (
