@@ -3,10 +3,10 @@ import { View, StyleSheet, Image, Animated, Button, Text } from 'react-native';
 import AnimatedCounter from './AnimatedCounter';
 import { ImageButton } from '../buttons';
 import { ImageText, CoinText } from '../text';
-import { ShopDialog, InviteDialog } from '../dialogs';
+import { ShopDialog, InviteDialog, MyVillageDialog, MapDialog } from '../dialogs';
 
 const initialY = 0;
-const fruitWidth = 100, fruitHeight = 100, fruitCount = 8;
+const fruitWidth = 100, fruitHeight = 80, fruitCount = 8;
 const totalHeight = fruitCount * fruitHeight;
 
 const fruitList = [
@@ -56,6 +56,8 @@ const FruitMachine = () => {
     const [spinning, setSpinning] = useState(false);
     const [isVisible, setVisible] = useState(false);
     const [isVisibleInvite, setVisibleInvite] = useState(false);
+    const [isGolenTicket, setGoldenTicket] = useState(false);
+    const [isVisibleMap, setVisibleMap] = useState(false);
 
     const [fruitMachine, setFruitMachine]: any = useState({ // has 3 slots
         slot0: 0,// current number in slot data
@@ -108,6 +110,11 @@ const FruitMachine = () => {
     }, []);
 
     const handleSpinResult = async (machineStatus: any) => {
+        setPlayerData({
+            ...playerData,
+            currentSpin: Math.min(playerData.currentSpin + 1, playerData.spinCount)
+        })
+
         // console.log(machineStatus, slotData[0][machineStatus.slot0], slotData[1][machineStatus.slot1], slotData[2][machineStatus.slot2]);
         const fruitOfslot0 = slotData[0][machineStatus.slot0],
             fruitOfslot1 = slotData[1][machineStatus.slot1],
@@ -117,18 +124,20 @@ const FruitMachine = () => {
         const fruitData2 = fruitList[fruitOfslot2];
 
         console.log(`${fruitData0.name}, ${fruitData1.name}, ${fruitData2.name}`);
+        // Fruit Game Logic here
+        if( true || fruitData0.name == fruitData1.name && fruitData1.name == fruitData2.name) {// matched
+            // setGoldenTicket(true);
+            setVisibleMap(true);
 
-        setPlayerData({
-            ...playerData,
-            currentSpin: Math.min(playerData.currentSpin + 1, playerData.spinCount)
-        })
+        }
+        
     }
     const spin = () => {
         setSpinning(true);
 
         // Randomize the stopping point for each slot
         const slotStatus: any = {};
-        console.log(initialY);
+        // console.log(initialY);
         const currentSlotY = [0, 0, 0];
         animations.forEach((anim, index) => {
             anim.setValue(initialY[index]);
@@ -153,8 +162,7 @@ const FruitMachine = () => {
                     setFruitMachine(slotStatus);
                     handleSpinResult(slotStatus);
                     setInitialY(currentSlotY);
-
-                    console.log('spin result', slotStatus);
+                    // console.log('spin result', slotStatus);
                 }
             });
         });
@@ -179,6 +187,12 @@ const FruitMachine = () => {
     const onInvite =async (params: any) => {
         console.log('invite dialog', params);
         setVisibleInvite(false);
+        
+    }
+    const onGoldenTicket = async (params:any) => {
+        
+    }
+    const onMap = async (params:any) => {
         
     }
     return (
@@ -209,8 +223,12 @@ const FruitMachine = () => {
             <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} />
             <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 10, }} />
             <ImageButton title={"EARNING"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} />
+
             <ShopDialog isOpen={isVisible} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
+            
+            <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} />
+            <MapDialog isOpen={isVisibleMap} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
         </View>
     );
 };
@@ -222,23 +240,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
         paddingBottom: 30,
-        borderRadius: 4,
+        borderRadius: 10,
     },
     slotsContainer: {
+        marginTop: 55,
         flexDirection: 'row',
-        height: 300,
+        height: 240,
         overflow: 'hidden',
         marginVertical: 10,
-        borderRadius: 5,
-        borderWidth: 5,
-        borderColor: '#78039a',
+        borderRadius: 10,
+        // borderWidth: 5,
+        // borderColor: '#78039a',
     },
     slot: {
         width: 100,
     },
     fruitImage: {
         width: 100,
-        height: 100,
+        height: 80,
         marginVertical: 0,
         borderColor: '#fed49a',
         borderWidth: 1,

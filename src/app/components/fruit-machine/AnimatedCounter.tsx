@@ -19,7 +19,7 @@ const AnimatedCounter = ({ targetValue, duration }: any) => {
             duration: 900,
             useNativeDriver: true,
           }).start();
-        console.log(targetValue, duration);
+        // console.log(targetValue, duration);
     }, [targetValue, duration]);
 
     // Interpolate value to round it to an integer
