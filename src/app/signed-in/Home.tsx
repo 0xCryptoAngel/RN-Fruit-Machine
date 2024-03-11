@@ -3,7 +3,7 @@ import { Platform, StyleSheet, View, ImageBackground, ImageSourcePropType } from
 import { Button, useTheme } from 'react-native-paper';
 import { useLinkTo } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 
 import { useAppSettings } from '../components/AppSettings';
@@ -18,13 +18,15 @@ function Home() {
         // setSigningOut(true);
         // await GoogleSignin.signOut();
         await auth().signOut();
-      }
+    }
     return (
         <Fragment>
             <ImageBackground style={styles.container} source={background}>
-                <ImageButton  title={"Play Now"} onPress={()=> navigation.navigate('Game')} style={{ marginVertical: 10,}}/>
-                <ImageButton  title={"Settings"} onPress={()=> navigation.navigate('Settings')} style={{ marginBottom: 10,}}/>
-                <ImageButton  title={"Log Out"} onPress={()=> signOut()} style={{ marginBottom: 30,}}/>
+                <View style={styles.buttons}>
+                    <ImageButton title={"Play Now"} onPress={() => navigation.navigate('Game')} style={{ marginVertical: 10, }} />
+                    <ImageButton title={"Settings"} onPress={() => navigation.navigate('Settings')} style={{ marginBottom: 10, }} />
+                    <ImageButton title={"Log Out"} onPress={() => signOut()} style={{ marginBottom: 30, }} />
+                </View>
             </ImageBackground>
         </Fragment>
     );
@@ -38,7 +40,9 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-    center: {
+    buttons: {
+        width: '100%',
+        paddingHorizontal: 10,
         alignItems: 'center',
     },
     divider: {

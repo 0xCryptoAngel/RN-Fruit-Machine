@@ -12,8 +12,8 @@ function ImageButton({ background, title, onPress , style }: any) {
     const linkTo = useLinkTo();
 
     return (
-        <TouchableOpacity style={[styles.button, style]} onPress={()=> onPress && onPress()}>
-            <ImageBackground style={styles.container} source={{ uri: background }}>
+        <TouchableOpacity style={[styles.container, style]} onPress={()=> onPress && onPress()}>
+            <ImageBackground style={styles.button} source={{ uri: background }}>
                 <Text style={styles.title} >
                     { title || 'Image Button'}
                 </Text>
@@ -23,16 +23,16 @@ function ImageButton({ background, title, onPress , style }: any) {
 }
 
 const styles = StyleSheet.create({
-    button: {
+    container: {
         width: '100%',
         height: 50,
         paddingHorizontal: 20,
         borderRadius: 25,
-        backgroundColor: '#00b23a',
-        borderWidth: 5,
-        borderColor: '#7cd4de',
+        backgroundColor: '#B85EFF',
+        borderWidth: 2,
+        borderColor: '#BEFF96',
     },
-    container: {
+    button: {
         // flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -41,10 +41,10 @@ const styles = StyleSheet.create({
         borderRadius: 25,
     },
     title: {
-        fontSize: 24,
-        color: '#fff',
+        fontSize: 22,
+        color: '#FBFBFB',
         fontFamily: 'Roboto',
-        fontWeight: 'bold',
+        fontWeight: '600',
     }});
 
 export default ImageButton;

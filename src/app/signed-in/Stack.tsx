@@ -8,6 +8,7 @@ import Profile from './Profile';
 import Settings from './Settings';
 import Home from './Home';
 import Game from './Game';
+import Payment from './Payment';
 
 const Stack = createStackNavigator();
 const TopTabs = createMaterialTopTabNavigator();
@@ -67,6 +68,12 @@ const SignedIn = () => {
         name="Settings"
         component={Settings}
         options={{ headerShown: false, title: appSettings.t('Settings') }}
+      />
+
+      <Stack.Screen
+        name="Payment"
+        component={Payment}
+        options={{ headerShown: false, title: appSettings.t('Payment') }}
       />
 
     </Stack.Navigator>

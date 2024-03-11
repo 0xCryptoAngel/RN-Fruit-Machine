@@ -9,11 +9,12 @@ import {
 } from 'react-native-paper';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {useAlerts} from 'react-native-paper-alerts';
-
 import {useAppSettings} from '../components/AppSettings';
+import { createUser } from '../services/userService';
 
 function CreateAccount(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirm, setConfirm] = useState<string>('');
@@ -34,11 +35,19 @@ function CreateAccount(): JSX.Element {
   async function handleCreate() {
     try {
       setLoading(true);
-      const credential = await auth().createUserWithEmailAndPassword(
+      // const credential = await auth().createUserWithEmailAndPassword(
+      //   email,
+      //   password,
+      // );
+      // credential.user.sendEmailVerification();
+
+      const result = await createUser({
+        username,
         email,
-        password,
-      );
-      credential.user.sendEmailVerification();
+      });
+
+      console.log('user created', result);
+
     } catch (e) {
       setLoading(false);
       const error = e as FirebaseAuthTypes.PhoneAuthError;
@@ -54,6 +63,18 @@ function CreateAccount(): JSX.Element {
     <ScrollView
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
       <Paragraph>{appSettings.t('createAccountInstructions')}</Paragraph>
+      <TextInput
+        style={styles.input}
+        mode="outlined"
+        label={appSettings.t('username')}
+        value={username}
+        onChangeText={setUsername}
+        // keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        // autoComplete="email"
+        autoFocus={true}
+      />
       <TextInput
         style={styles.input}
         mode="outlined"
