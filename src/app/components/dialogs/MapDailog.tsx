@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Modal, ScrollView, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground } from 'react-native';
 
 import ImageBuilding1 from '../../../static/assets/building-1.jpg';
@@ -8,10 +8,11 @@ import ImageBuilding4 from '../../../static/assets/building-4.jpg';
 
 import { ImageButton } from '../buttons';
 import { Divider } from '../dividers';
+import { getUsers } from '../../services/gameService';
 
-const MapDialog = ({ isOpen, onOK, onCancel }: any) => {
+const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
 
-    const [villages, setVillages] = useState([
+    const [villages, setVillages]: any = useState([
         {
             userId: 1,
             name: 'village1',
@@ -22,27 +23,6 @@ const MapDialog = ({ isOpen, onOK, onCancel }: any) => {
             name: 'village2',
             level: 3,
         },
-        {
-            userId: 3,
-            name: 'village3',
-            level: 3,
-        },
-        {
-            userId: 4,
-            name: 'village4',
-            level: 3,
-        },
-        {
-            userId: 5,
-            name: 'village5',
-            level: 3,
-        },
-        {
-            userId: 6,
-            name: 'village6',
-            level: 3,
-        },
-
     ]);
     const buildings = [
         {
@@ -79,22 +59,54 @@ const MapDialog = ({ isOpen, onOK, onCancel }: any) => {
         console.log(village, building);
         setFormData({
             ...formData,
+            ...village,
             selectedVillage: village.userId,
             selectedBuilding: building.value
         });
-        onOK(building);
+        // onOK(building);
         console.log({
             ...formData,
+            ...village,
             selectedVillage: village.userId,
             selectedBuilding: building.value
         })
     }
+    useEffect(() => {
+        if (!isOpen) return;
+        
+        setFormData({
+            selectedVillage: 'None',
+            selectedBuilding: 'None',
+        });
+
+        const fetchData = async () => {
+            const users = await getUsers(20);
+            console.log(users);
+
+            const newVillages: any = [];
+            users?.map((user) => {
+                if(user.email == email) return;
+                newVillages.push({
+                    ...user,
+                    userId: user.email,
+                    name: user.username,
+                    level: user.shield,
+                    golden_ticket_owned: user.golden_ticket_owned,
+                    golden_ticket_building: user.golden_ticket_building,
+                })
+            });
+            setVillages(newVillages);
+        }
+
+        fetchData();
+
+    }, [isOpen]);
     return (<>
         <Modal visible={isOpen} animationType="fade" transparent={true} onRequestClose={() => { /*onCancel()*/ }}>
             <TouchableOpacity style={styles.modalContainer} onPressOut={() => { }} onPress={() => { }}>
                 <View style={styles.modalView}>
                     <View style={styles.alert}>
-                        <Text style={styles.alertMessage}>Sellect village&building to get the golden ticket.</Text>
+                        <Text style={styles.alertMessage}>{`Sellect village&building to get ${target}.`}</Text>
                         <ScrollView style={styles.villages}>
                             {villages?.map((village: any) => (
                                 <View style={styles.buildings} key={village.userId}>
@@ -104,13 +116,13 @@ const MapDialog = ({ isOpen, onOK, onCancel }: any) => {
                                             <TouchableOpacity key={index} style={styles.coinItem} onPress={() => handleSelect(village, item)}>
                                                 <ImageBackground source={item.image} style={styles.spinImage}>
                                                 </ImageBackground>
-                                                <Text style={{ 
-                                                    marginVertical: 5, 
-                                                    textAlign: 'center', 
-                                                    fontSize: 14, 
-                                                    fontWeight: 'bold', 
-                                                    color: (item.value == formData.selectedBuilding) && (formData.selectedVillage == village.userId)  ? '#f00' : "#ccc",
-                                                    }}> {item.title}</Text>
+                                                <Text style={{
+                                                    marginVertical: 5,
+                                                    textAlign: 'center',
+                                                    fontSize: 14,
+                                                    fontWeight: 'bold',
+                                                    color: (item.value == formData.selectedBuilding) && (formData.selectedVillage == village.userId) ? '#f00' : "#ccc",
+                                                }}> {item.title}</Text>
                                             </TouchableOpacity>
                                         ))
                                     }
@@ -120,6 +132,9 @@ const MapDialog = ({ isOpen, onOK, onCancel }: any) => {
 
                         <Divider />
                         <View style={styles.alertButtonGroup}>
+                            <View style={styles.alertButton}>
+                                <ImageButton title="Confirm" onPress={() => onOK(formData)} />
+                            </View>
                             <View style={styles.alertButton}>
                                 <ImageButton title="BACK" onPress={() => onCancel()} />
                             </View>

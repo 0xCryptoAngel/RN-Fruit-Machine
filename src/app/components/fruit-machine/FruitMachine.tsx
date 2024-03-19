@@ -11,10 +11,6 @@ import { UserContext } from '../../App';
 import { sendEmail } from '../../services/emailService';
 import appConfig from '../../util/config';
 
-const initialY = 0;
-const fruitWidth = 100, fruitHeight = 80, fruitCount = 8;
-const totalHeight = fruitCount * fruitHeight;
-
 const fruitList = [
     {
         name: 'Shield',
@@ -58,8 +54,11 @@ const fruitList = [
     },
 ]
 
-
 const FruitMachine = () => {
+    // const initialY = 0;
+    const fruitWidth = 100, fruitHeight = 80, fruitCount = 8;
+    const totalHeight = fruitCount * fruitHeight;
+
     const user = useContext(UserContext);
 
     const navigation: any = useNavigation();
@@ -69,12 +68,13 @@ const FruitMachine = () => {
     const [isVisibleInvite, setVisibleInvite] = useState(false);
     const [isGolenTicket, setGoldenTicket] = useState(false);
     const [isVisibleMap, setVisibleMap] = useState(false);
+    const [target, setTarget] = useState('Golden ticket');
 
-    const [fruitMachine, setFruitMachine]: any = useState({ // has 3 slots
-        slot0: 0,// current number in slot data
-        slot1: 0,
-        slot2: 0,
-    });
+    // const [fruitMachine, setFruitMachine]: any = useState({ // has 3 slots
+    //     slot0: 0,// current number in slot data
+    //     slot1: 0,
+    //     slot2: 0,
+    // });
 
     const [slotData, setSlotData] = useState([ // slot has 7 fruits
         [0, 1, 2, 3, 4, 5, 6, 7],// number in fruits list
@@ -85,8 +85,12 @@ const FruitMachine = () => {
     // let initialY = [0, 0, 0];
     const [playerData, setPlayerData] = useState({
         spin_no: 0,
-        spins: 50,
-        coins: 1000,
+        spins: 0,
+        coins: 0,
+        shield: 0,
+        golden_ticket_owned: false,
+        golden_ticket_building: 'not yet',
+        hasFrom: 1710889112,
     })
 
     const animations = useRef([
@@ -137,6 +141,7 @@ const FruitMachine = () => {
     const handleSpinResult = async (machineStatus: any) => {
         let coinPlus = 0;
         let spinPlus = 0;
+        let shieldPlus = 0;
         // console.log(machineStatus, slotData[0][machineStatus.slot0], slotData[1][machineStatus.slot1], slotData[2][machineStatus.slot2]);
         const fruitOfslot0 = slotData[0][machineStatus.slot0],
             fruitOfslot1 = slotData[1][machineStatus.slot1],
@@ -160,6 +165,9 @@ const FruitMachine = () => {
         bets[fruitData0.name] = bets[fruitData0.name] + 1;
         bets[fruitData1.name] = bets[fruitData1.name] + 1;
         bets[fruitData2.name] = bets[fruitData2.name] + 1;
+
+        console.log('bets status', bets);
+
 
         if (bets['Chocolate'] == 1) {
             coinPlus = 1200;
@@ -191,14 +199,17 @@ const FruitMachine = () => {
             coinPlus += 75000;
         }
 
-        if (bets['Sheld'] == 3) {// protect from attackers
-
+        if (bets['Shield'] == 3) {// protect from attackers
+            shieldPlus += 3;
         }
         if (bets['Golden ticket'] == 3) {// gives a chance to steal the ticket
+            setTarget('Golden ticket');
             setVisibleMap(true);
-            setGoldenTicket(true);
+            // setGoldenTicket(true);
         }
+
         if (bets['Thief'] == 3) {// gives a chance to steal coins
+            setTarget('Coin');
             setVisibleMap(true);
         }
         if (bets['More spins'] == 3) {// gives more spin
@@ -215,21 +226,20 @@ const FruitMachine = () => {
             spin_no: Math.min(playerData.spin_no + 1, playerData.spins),
             coins: playerData.coins + coinPlus,
             spins: playerData.spins + spinPlus,
+            shield: playerData.shield + shieldPlus,
         }
         console.log(newData);
-        setPlayerData({
-            ...playerData,
-            ...newData
-        });
-
-        // updateUser(user?.email, newData)
-        //     .then(() => {
-        //         console.log('User updated successfully');
-        //         setPlayerData(newData);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
+        updateUser(user?.email, newData)
+            .then(() => {
+                console.log('User updated successfully');
+                setPlayerData({
+                    ...playerData,
+                    ...newData
+                });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
 
     }
     const spin = () => {
@@ -259,7 +269,7 @@ const FruitMachine = () => {
             }).start(() => {
                 if (index === animations.length - 1) {
                     setSpinning(false);
-                    setFruitMachine(slotStatus);
+                    // setFruitMachine(slotStatus);
                     handleSpinResult(slotStatus);
                     setInitialY(currentSlotY);
                     // console.log('spin result', slotStatus);
@@ -277,21 +287,8 @@ const FruitMachine = () => {
             'amount': params.value,
             'cost': params.cost,
             'currentSpins': playerData.spins,
-            'currentCoins': playerData.coins, 
+            'currentCoins': playerData.coins,
         });
-
-        // if (params.type == 'spin') {
-        //     setPlayerData({
-        //         ...playerData,
-        //         spins: playerData.spins + params.value
-        //     })
-        // }
-        // if (params.type == 'coin') {
-        //     setPlayerData({
-        //         ...playerData,
-        //         coins: playerData.coins + params.value
-        //     })
-        // }
     }
     const onInvite = async (params: any) => {
         console.log('invite dialog', params);
@@ -332,9 +329,54 @@ const FruitMachine = () => {
             });
     }
     const onMap = async (params: any) => {
+        setVisibleMap(false);
+        console.log('params from map dialog', params);
+        if (target == "Golden ticket") {
+            if (params.golden_ticket_owned && (params.golden_ticket_building == params.selectedBuilding)) {
+                const randomNumber = Math.floor(Math.random() * 4) + 1;// random building number
+                await updateUser(user?.email, {
+                    golden_ticket_owned: true,
+                    golden_ticket_building: `building${randomNumber}`,
+                    hasFrom: Date.now(),
+                });
 
+                await updateUser(params.email, {
+                    golden_ticket_owned: false,
+                    golden_ticket_building: `building${-1}`,
+                    hasFrom: Date.now(),
+                });
+
+                setPlayerData({
+                    ...playerData,
+                    golden_ticket_owned: true,
+                    golden_ticket_building: `building${randomNumber}`,
+                    hasFrom: Date.now(),
+                })
+            }
+        }
+        if (target == "Coin") {
+            const currentCoins = params.coins;// random building number
+            await updateUser(user?.email, {
+                coins: playerData.coins + currentCoins * 0.25,
+            });
+
+            await updateUser(params.email, {
+                coins: currentCoins * 0.75,
+            });
+
+            setPlayerData({
+                ...playerData,
+                coins: playerData.coins + currentCoins * 0.25,
+            })
+        }
     }
-   
+    const getOwnedDays = (hasFrom: any) => {
+        let result = 0;
+        const currentTimestamp = Date.now();
+        const differenceInMilliseconds = currentTimestamp - hasFrom;
+        result = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+        return `${result} days`;
+    }
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.machine} source={ImageMachine as ImageSourcePropType} resizeMode="stretch" >
@@ -351,7 +393,39 @@ const FruitMachine = () => {
                     ))}
                 </View>
             </ImageBackground>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+            <View style={styles.gameDetail}>
+                <View style={styles.infoRow}>
+                    <View style={styles.textGroup}>
+                        <Text style={styles.labelText}>{`Spins`}</Text>
+                        <Text style={styles.valueText}>{`${playerData.spins}`}</Text>
+                    </View>
+                    <View style={styles.textGroup}>
+                        <Text style={styles.labelText}>{`Available`}</Text>
+                        <Text style={styles.valueText}>{`${playerData.spins - playerData.spin_no}`}</Text>
+                    </View>
+                </View>
+                <View style={styles.infoRow}>
+                    <View style={styles.textGroup}>
+                        <Text style={styles.labelText}>{`Coins`}</Text>
+                        <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
+                    </View>
+                    <View style={styles.textGroup}>
+                        <Text style={styles.labelText}>{`Shield     `}</Text>
+                        <Text style={styles.valueText}>{`${playerData.shield}`}</Text>
+                    </View>
+                </View>
+                <View style={styles.infoRow}>
+                    <View style={styles.textGroup}>
+                        <Text style={styles.labelText}>{`Golden Ticket`}</Text>
+                        <Text style={styles.valueText}>{`${playerData.golden_ticket_owned ? 'Yes' : "No"}`}</Text>
+                    </View>
+                    <View style={styles.textGroup}>
+                        <Text style={styles.labelText}>{`For`}</Text>
+                        <Text style={styles.valueText}>{getOwnedDays(playerData.hasFrom)}</Text>
+                    </View>
+                </View>
+            </View>
+            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
                 <View style={styles.counterContainer}>
                     <Text style={{ fontSize: 16, color: '#fff', paddingHorizontal: 5, fontFamily: 'Roboto' }}>{`Spins(${playerData.spins})`}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -361,17 +435,17 @@ const FruitMachine = () => {
                 <View style={styles.coinContainer}>
                     <CoinText background={require('../../../static/assets/coin.jpg')} title={playerData.coins} />
                 </View>
-            </View>
+            </View> */}
             <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} />
             <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 10, }} />
-            <ImageButton title={"EARNING"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} />
+            <ImageButton title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} />
             {/* <ImageButton title={"BACK"} onPress={() => navigation.navigate('Home')} disabled={spinning} style={{ marginTop: 10, }} /> */}
 
             <ShopDialog isOpen={isVisible} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
 
             <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} />
-            <MapDialog isOpen={isVisibleMap} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
+            <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
         </View>
     );
 };
@@ -432,6 +506,43 @@ const styles = StyleSheet.create({
         borderColor: '#fff',
         marginVertical: 20,
         marginHorizontal: 10,
+    },
+    gameDetail: {
+        width: '100%',
+        // flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        backgroundColor: '#410577',
+        borderRadius: 5,
+        borderWidth: 2,
+        borderColor: '#fff',
+        marginVertical: 20,
+    },
+    infoRow: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    textGroup: {
+        // flex: 1,
+        width: "50%",
+        flexDirection: 'row',
+        alignItems: 'baseline',
+    },
+    labelText: {
+        fontSize: 16,
+        color: '#fff',
+        paddingHorizontal: 5,
+        fontFamily: 'Roboto'
+    },
+    valueText: {
+        fontSize: 20,
+        color: '#f80',
+        paddingHorizontal: 5,
+        fontFamily: 'Roboto'
     }
 });
 
