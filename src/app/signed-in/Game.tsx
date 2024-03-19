@@ -7,12 +7,14 @@ import { ImageButton } from '../components/buttons';
 import { FruitMachine } from '../components/fruit-machine';
 import Background from '../../static/assets/game-background.jpg';
 // import GoldenTicket from '../../static/assets/golden-ticket.jpg';
-function Game() {
+function Game({route}: any) {
+    const params = route.params;
+
     const theme = useTheme();
     const appSettings = useAppSettings();
     const linkTo = useLinkTo();
     const GoldenTicket = require('../../static/assets/golden-ticket.jpg');
-
+    
     return (
         <Fragment>
             <ImageBackground style={styles.container} source={Background as ImageSourcePropType}>

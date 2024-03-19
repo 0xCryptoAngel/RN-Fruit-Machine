@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 import {
   Button,
   HelperText,
@@ -13,6 +15,9 @@ import {useAppSettings} from '../components/AppSettings';
 import { createUser } from '../services/userService';
 
 function CreateAccount(): JSX.Element {
+
+  const navigation: any = useNavigation();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -35,18 +40,21 @@ function CreateAccount(): JSX.Element {
   async function handleCreate() {
     try {
       setLoading(true);
-      // const credential = await auth().createUserWithEmailAndPassword(
-      //   email,
-      //   password,
-      // );
-      // credential.user.sendEmailVerification();
+      
+      const credential = await auth().createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+      credential.user.sendEmailVerification();
 
       const result = await createUser({
         username,
         email,
       });
+      setLoading(false);
 
       console.log('user created', result);
+      // navigation.navigate('SignIn', {});
 
     } catch (e) {
       setLoading(false);

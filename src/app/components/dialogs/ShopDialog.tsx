@@ -19,19 +19,22 @@ const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
             type: 'spin',
             title: 'Spin 25',
             value: 25,
-            image: ImageSpin25
+            image: ImageSpin25,
+            cost: 1.5,
         },
         {
             type: 'spin',
             title: 'Spin 75',
             value: 75,
-            image: ImageSpin75
+            image: ImageSpin75,
+            cost: 2.5
         },
         {
             type: 'spin',
             title: 'Spin 200',
             value: 200,
-            image: ImageSpin200
+            image: ImageSpin200,
+            cost: 8.99
         },
     ]
 
@@ -40,21 +43,22 @@ const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
             type: 'coin',
             title: 'Coin 600K',
             value: 600 * 1000,
-            image: ImageCoin600k
+            image: ImageCoin600k,
+            cost: 1.5
         },
         {
             type: 'coin',
-
             title: 'Coin 1M',
             value: 1 * 1000000,
-            image: ImageCoin1m
+            image: ImageCoin1m,
+            cost: 2.5
         },
         {
             type: 'coin',
-
             title: 'Coin 4M',
             value: 4 * 1000000,
-            image: ImageCoin4m
+            image: ImageCoin4m,
+            cost: 8.5,
         },
     ]
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, Image, Animated, Button, Text, ImageBackground, ImageSourcePropType } from 'react-native';
 import AnimatedCounter from './AnimatedCounter';
@@ -6,6 +6,10 @@ import { ImageButton } from '../buttons';
 import { ImageText, CoinText } from '../text';
 import { ShopDialog, InviteDialog, MyVillageDialog, MapDialog } from '../dialogs';
 import ImageMachine from '../../../static/assets/background-machine.png';
+import { getUser, updateUser } from '../../services/gameService';
+import { UserContext } from '../../App';
+import { sendEmail } from '../../services/emailService';
+import appConfig from '../../util/config';
 
 const initialY = 0;
 const fruitWidth = 100, fruitHeight = 80, fruitCount = 8;
@@ -54,7 +58,10 @@ const fruitList = [
     },
 ]
 
+
 const FruitMachine = () => {
+    const user = useContext(UserContext);
+
     const navigation: any = useNavigation();
 
     const [spinning, setSpinning] = useState(false);
@@ -77,9 +84,9 @@ const FruitMachine = () => {
     const [initialY, setInitialY] = useState([0, 0, 0]);
     // let initialY = [0, 0, 0];
     const [playerData, setPlayerData] = useState({
-        spinCount: 50,
-        currentSpin: 0,
-        coinCount: 1000,
+        spin_no: 0,
+        spins: 50,
+        coins: 1000,
     })
 
     const animations = useRef([
@@ -111,14 +118,25 @@ const FruitMachine = () => {
         // Generate new slot data with shuffled numbers
         const newSlotData = slotData.map(subArray => shuffleArray([...subArray]));
         setSlotData(newSlotData);
+        getUser(user?.email)
+            .then((player: any) => {
+                if (player) {
+                    console.log('User found:', player);
+                    // Do something with the user data
+                    setPlayerData(player);
+                } else {
+                    console.log('User not found');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
     }, []);
 
     const handleSpinResult = async (machineStatus: any) => {
-        setPlayerData({
-            ...playerData,
-            currentSpin: Math.min(playerData.currentSpin + 1, playerData.spinCount)
-        })
-
+        let coinPlus = 0;
+        let spinPlus = 0;
         // console.log(machineStatus, slotData[0][machineStatus.slot0], slotData[1][machineStatus.slot1], slotData[2][machineStatus.slot2]);
         const fruitOfslot0 = slotData[0][machineStatus.slot0],
             fruitOfslot1 = slotData[1][machineStatus.slot1],
@@ -129,11 +147,89 @@ const FruitMachine = () => {
 
         console.log(`${fruitData0.name}, ${fruitData1.name}, ${fruitData2.name}`);
         // Fruit Game Logic here
-        if (true || fruitData0.name == fruitData1.name && fruitData1.name == fruitData2.name) {// matched
-            setGoldenTicket(true);
-            // setVisibleMap(true);
+        const bets: any = {
+            'Shield': 0,
+            'Golden ticket': 0,
+            'Thief': 0,
+            'More spins': 0,
+            'Chocolate': 0,
+            'Bag of chocolates': 0,
+            'Hat': 0,
+            'Question mark': 0
+        }
+        bets[fruitData0.name] = bets[fruitData0.name] + 1;
+        bets[fruitData1.name] = bets[fruitData1.name] + 1;
+        bets[fruitData2.name] = bets[fruitData2.name] + 1;
+
+        if (bets['Chocolate'] == 1) {
+            coinPlus = 1200;
+        }
+        if (bets['Chocolate'] == 2) {
+            coinPlus = 3000;
+        }
+        if (bets['Chocolate'] == 3) {
+            coinPlus = 10000;
+        }
+
+        if (bets['Bag of chocolates'] == 1) {
+            coinPlus += 2500;
+        }
+        if (bets['Bag of chocolates'] == 2) {
+            coinPlus += 8000;
+        }
+        if (bets['Bag of chocolates'] == 3) {
+            coinPlus += 20000;
+        }
+
+        if (bets['Hat'] == 1) {
+            coinPlus += 5000;
+        }
+        if (bets['Hat'] == 2) {
+            coinPlus += 10000;
+        }
+        if (bets['Hat'] == 3) {
+            coinPlus += 75000;
+        }
+
+        if (bets['Sheld'] == 3) {// protect from attackers
 
         }
+        if (bets['Golden ticket'] == 3) {// gives a chance to steal the ticket
+            setVisibleMap(true);
+            setGoldenTicket(true);
+        }
+        if (bets['Thief'] == 3) {// gives a chance to steal coins
+            setVisibleMap(true);
+        }
+        if (bets['More spins'] == 3) {// gives more spin
+            spinPlus += 200;
+        }
+
+        if (bets['Question mark'] == 3) {// gives more spin
+            spinPlus += Math.ceil(Math.random() * 10) * 50;
+            coinPlus += Math.ceil(Math.random() * 10) * 500;
+        }
+
+        // save result
+        const newData = {
+            spin_no: Math.min(playerData.spin_no + 1, playerData.spins),
+            coins: playerData.coins + coinPlus,
+            spins: playerData.spins + spinPlus,
+        }
+        console.log(newData);
+        setPlayerData({
+            ...playerData,
+            ...newData
+        });
+
+        // updateUser(user?.email, newData)
+        //     .then(() => {
+        //         console.log('User updated successfully');
+        //         setPlayerData(newData);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
 
     }
     const spin = () => {
@@ -175,37 +271,70 @@ const FruitMachine = () => {
     const onBuyCoinSpin = async (params: any) => {
         console.log(params);
         setVisible(false);
-        
+
         navigation.navigate('Payment', {
             'item': params.type,
             'amount': params.value,
-            'cost': 100,
+            'cost': params.cost,
+            'currentSpins': playerData.spins,
+            'currentCoins': playerData.coins, 
         });
 
-        if (params.type == 'spin') {
-            setPlayerData({
-                ...playerData,
-                spinCount: playerData.spinCount + params.value
-            })
-        }
-        if (params.type == 'coin') {
-            setPlayerData({
-                ...playerData,
-                coinCount: playerData.coinCount + params.value
-            })
-        }
+        // if (params.type == 'spin') {
+        //     setPlayerData({
+        //         ...playerData,
+        //         spins: playerData.spins + params.value
+        //     })
+        // }
+        // if (params.type == 'coin') {
+        //     setPlayerData({
+        //         ...playerData,
+        //         coins: playerData.coins + params.value
+        //     })
+        // }
     }
     const onInvite = async (params: any) => {
         console.log('invite dialog', params);
+        await sendEmail({
+            from: appConfig.adminEmail,
+            to: params.email,
+            subject: `Invitation from Golden Ticket`,
+            content: params.message
+        });
+        const coinPlus = 20000;
+        const spinPlus = 200;
+        const newData = {
+            coins: playerData.coins + coinPlus,
+            spins: playerData.spins + spinPlus,
+        }
+        setPlayerData({
+            ...playerData,
+            ...newData
+        });
+        await updateUser(user?.email, newData);
         setVisibleInvite(false);
 
     }
     const onGoldenTicket = async (params: any) => {
-
+        console.log(params);
+        updateUser(user?.email, {
+            golden_ticket_owned: true,
+            [params.value]: {
+                ...params,
+                tickets: 1,
+            }
+        })
+            .then(() => {
+                console.log('User updated successfully');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
     const onMap = async (params: any) => {
 
     }
+   
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.machine} source={ImageMachine as ImageSourcePropType} resizeMode="stretch" >
@@ -224,13 +353,13 @@ const FruitMachine = () => {
             </ImageBackground>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
                 <View style={styles.counterContainer}>
-                    <Text style={{ fontSize: 16, color: '#fff', paddingHorizontal: 5, fontFamily: 'Roboto' }}>{`Spins(${playerData.spinCount})`}</Text>
+                    <Text style={{ fontSize: 16, color: '#fff', paddingHorizontal: 5, fontFamily: 'Roboto' }}>{`Spins(${playerData.spins})`}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <AnimatedCounter targetValue={playerData.spinCount - playerData.currentSpin} duration={5000} />
+                        <AnimatedCounter targetValue={playerData.spins - playerData.spin_no} duration={5000} />
                     </View>
                 </View>
                 <View style={styles.coinContainer}>
-                    <CoinText background={require('../../../static/assets/coin.jpg')} title={playerData.coinCount} />
+                    <CoinText background={require('../../../static/assets/coin.jpg')} title={playerData.coins} />
                 </View>
             </View>
             <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} />
