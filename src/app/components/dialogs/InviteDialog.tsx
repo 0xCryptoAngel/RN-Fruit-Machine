@@ -8,7 +8,7 @@ const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
 
     const [formData, setFormData]: any = useState({
         email: 'your@email.com',
-        message: 'I would like to invite you on Golden Ticket App',
+        message: "Hi, \nI would like to invite you on Golden Ticket App.\n Enjoy now!",
     });
 
     const handleInvite = async () => {
@@ -24,7 +24,10 @@ const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
                         <Image style={styles.alertIcon} source={staticImage as ImageSourcePropType} />
                         {/* <Text style={styles.alertTitle}>Shop</Text> */}
                         <Text style={styles.alertMessage}>You can invite your friend and earn extra spins and coins</Text>
-                        <View style={{}}>
+                        <View style={{
+                            justifyContent: 'center',
+                            paddingVertical: 5,
+                        }}>
                             <Text style={styles.label}>Email</Text>
                             <TextInput
                                 style={styles.input}
@@ -34,10 +37,13 @@ const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
                             />
                             <Text style={styles.label}>Message</Text>
                             <TextInput
-                                style={styles.input}
+                                style={styles.message}
                                 onChangeText={(text) => setFormData({ ...formData, message: text })}
                                 value={formData.message}
-                                placeholder="Input short notes"
+                                placeholder="Input your message"
+                                multiline={true}
+                                numberOfLines={8}
+
                             />
                         </View>
                         <View style={styles.alertButtonGroup}>
@@ -142,6 +148,17 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto',
         fontWeight: '500',
     },
-    
+    message: {
+        marginBottom: 6,
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        color: '#000',
+        fontFamily: 'Roboto',
+        fontWeight: '500',
+        alignItems: 'flex-start', 
+        textAlignVertical: 'top', 
+    },
+
 });
 

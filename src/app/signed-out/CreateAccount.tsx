@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import {
@@ -9,9 +9,9 @@ import {
   TextInput,
   useTheme,
 } from 'react-native-paper';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {useAlerts} from 'react-native-paper-alerts';
-import {useAppSettings} from '../components/AppSettings';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { useAlerts } from 'react-native-paper-alerts';
+import { useAppSettings } from '../components/AppSettings';
 import { createUser } from '../services/userService';
 
 function CreateAccount(): JSX.Element {
@@ -40,7 +40,7 @@ function CreateAccount(): JSX.Element {
   async function handleCreate() {
     try {
       setLoading(true);
-      
+
       const credential = await auth().createUserWithEmailAndPassword(
         email,
         password,
@@ -50,6 +50,13 @@ function CreateAccount(): JSX.Element {
       const result = await createUser({
         username,
         email,
+        "spins": 50,
+        "spin_no": 0,
+        "coins": 50000,
+        "golden_ticket_owned": false,
+        "golden_ticket_building": 'not yet',
+        "hasFrom": Date.now(),
+        'shield': 0,
       });
       setLoading(false);
 
@@ -62,14 +69,14 @@ function CreateAccount(): JSX.Element {
       Alert.alert(
         appSettings.t('createAccountError'),
         appSettings.t(error.code ?? 'unknownError'),
-        [{text: appSettings.t('OK')}],
+        [{ text: appSettings.t('OK') }],
       );
     }
   }
 
   return (
     <ScrollView
-      style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Paragraph>{appSettings.t('createAccountInstructions')}</Paragraph>
       <TextInput
         style={styles.input}

@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Platform, StyleSheet, View, ImageBackground, ImageSourcePropType, Text, Image } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 import { useLinkTo } from '@react-navigation/native';
@@ -7,14 +7,23 @@ import { ImageButton } from '../components/buttons';
 import { FruitMachine } from '../components/fruit-machine';
 import Background from '../../static/assets/game-background.jpg';
 // import GoldenTicket from '../../static/assets/golden-ticket.jpg';
+
 function Game({route}: any) {
     const params = route.params;
-
+    const [refreshKey, setRefreshKey] = useState(0);
     const theme = useTheme();
     const appSettings = useAppSettings();
     const linkTo = useLinkTo();
-    const GoldenTicket = require('../../static/assets/golden-ticket.jpg');
     
+    const refreshFruitMachine = () => {
+        setRefreshKey(prevKey => prevKey + 1); // Update the key to force remount
+    };
+
+    useEffect(() => {
+        // Call the refresh function when params change
+        refreshFruitMachine();
+    }, [params]);
+
     return (
         <Fragment>
             <ImageBackground style={styles.container} source={Background as ImageSourcePropType}>
@@ -24,7 +33,7 @@ function Game({route}: any) {
                     </View> */}
                     <Text style={styles.title}>Golden Ticket</Text>
                 </View>
-                <FruitMachine />
+                <FruitMachine key={refreshKey}/>
             </ImageBackground>
         </Fragment>
     );

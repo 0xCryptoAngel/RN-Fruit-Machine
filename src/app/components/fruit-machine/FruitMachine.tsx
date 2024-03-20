@@ -90,7 +90,7 @@ const FruitMachine = () => {
         shield: 0,
         golden_ticket_owned: false,
         golden_ticket_building: 'not yet',
-        hasFrom: 1710889112,
+        hasFrom: Date.now(),
     })
 
     const animations = useRef([
@@ -119,24 +119,25 @@ const FruitMachine = () => {
     };
 
     useEffect(() => {
-        // Generate new slot data with shuffled numbers
-        const newSlotData = slotData.map(subArray => shuffleArray([...subArray]));
-        setSlotData(newSlotData);
-        getUser(user?.email)
-            .then((player: any) => {
+        const fetchUserData = async () => {
+            try {
+                const player: any = await getUser(user?.email);
                 if (player) {
                     console.log('User found:', player);
-                    // Do something with the user data
                     setPlayerData(player);
                 } else {
                     console.log('User not found');
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error('Error:', error);
-            });
-
-    }, []);
+            }
+        };
+    
+        const newSlotData = slotData.map(subArray => shuffleArray([...subArray]));
+        setSlotData(newSlotData);
+    
+        fetchUserData();
+    }, [user]);
 
     const handleSpinResult = async (machineStatus: any) => {
         let coinPlus = 0;
@@ -421,7 +422,7 @@ const FruitMachine = () => {
                     </View>
                     <View style={styles.textGroup}>
                         <Text style={styles.labelText}>{`For`}</Text>
-                        <Text style={styles.valueText}>{getOwnedDays(playerData.hasFrom)}</Text>
+                        <Text style={styles.valueText}>{ playerData.golden_ticket_owned ? getOwnedDays(playerData.hasFrom): '0 day'}</Text>
                     </View>
                 </View>
             </View>
@@ -530,6 +531,7 @@ const styles = StyleSheet.create({
         // flex: 1,
         width: "50%",
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'baseline',
     },
     labelText: {

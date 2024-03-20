@@ -78,9 +78,8 @@ const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
                             {
                                 spinItems.map((item: any, index: number) => (
                                     <TouchableOpacity key={index} style={styles.coinItem} onPress={()=>handleBuy(item)}>
-                                        <ImageBackground source={item.image} style={styles.spinImage}>
-
-                                        </ImageBackground>
+                                        <ImageBackground source={item.image} style={styles.spinImage} />
+                                        <Text style={styles.price}>{ `£ ${item.cost}` }</Text>
                                     </TouchableOpacity>
                                 ))
                             }
@@ -90,9 +89,8 @@ const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
                             {
                                 coinItems.map((item: any, index: number) => (
                                     <TouchableOpacity key={index} style={styles.coinItem}  onPress={()=>handleBuy(item)}>
-                                        <ImageBackground source={item.image} style={styles.coinImage}>
-
-                                        </ImageBackground>
+                                        <ImageBackground source={item.image} style={styles.coinImage} />
+                                        <Text style={styles.price}>{ `£ ${item.cost}` }</Text>
                                     </TouchableOpacity>
                                 ))
                             }
@@ -197,11 +195,16 @@ const styles = StyleSheet.create({
         alignItems: 'baseline',
     },
     coinItem: {
-
+        alignItems: 'center',
     },
     coinImage: {
         width: 100,
         height: 150,
+    },
+    price: {
+        color: '#05f',
+        fontSize: 18,
+        fontWeight: '600',
     }
 });
 

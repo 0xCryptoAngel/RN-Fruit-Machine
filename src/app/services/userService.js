@@ -8,17 +8,7 @@ const db = getFirestore(app);
 const userCollection = collection(db, 'users');
 
 export const createUser = async (data) => {
-    const result = await addDoc(userCollection, {
-       ...data,
-       "coins": 50000,
-       "spins": 50,
-       "golden_ticket_owned": false,
-       "spin_no": 0,
-        "hasFrom": {
-            seconds: 0,
-        },
-        'shield': 0,
-    });
+    const result = await addDoc(userCollection, data);
 
     return result;
 }
