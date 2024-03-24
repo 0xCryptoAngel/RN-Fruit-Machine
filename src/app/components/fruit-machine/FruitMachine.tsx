@@ -287,7 +287,7 @@ const FruitMachine = () => {
            
             currentSlotY[index] = finalPosition;
             if (finalPosition >= -(fruitCount - 3 + 1) * fruitHeight) {
-                currentSlotY[index] = finalPosition - fruitCount * fruitHeight;
+                currentSlotY[index] = finalPosition - fruitCount  * fruitHeight;
             }
             // console.log("finalPosition", finalPosition, initialY[index], randomNumber);
             
