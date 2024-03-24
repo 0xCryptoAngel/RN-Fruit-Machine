@@ -9,6 +9,9 @@ import ImageCoin4m from '../../../static/assets/4m.jpg'
 import ImageSpin25 from '../../../static/assets/spin25.png'
 import ImageSpin75 from '../../../static/assets/spin75.png'
 import ImageSpin200 from '../../../static/assets/spin200.png'
+
+import ImageShop from '../../../static/assets/shop_bachground.png'
+
 import { ImageButton } from '../buttons';
 import { Divider } from '../dividers';
 
@@ -62,7 +65,7 @@ const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
         },
     ]
 
-    const handleBuy =async (params:any) => {
+    const handleBuy = async (params: any) => {
         console.log(params);
         onOK(params);
     }
@@ -70,37 +73,42 @@ const ShopDialog = ({ isOpen, onOK, onCancel }: any) => {
         <Modal visible={isOpen} animationType="fade" transparent={true} onRequestClose={() => onCancel()}>
             <TouchableOpacity style={styles.modalContainer} onPressOut={() => { onCancel() }}>
                 <View style={styles.modalView}>
-                    <View style={styles.alert}>
+                    <ImageBackground source={ImageShop as ImageSourcePropType} style={styles.body}>
                         <Image style={styles.alertIcon} source={staticImage as ImageSourcePropType} />
-                        {/* <Text style={styles.alertTitle}>Shop</Text> */}
-                        <Text style={styles.alertMessage}>What do you need to buy now?</Text>
-                        <View style={styles.buySpins}>
-                            {
-                                spinItems.map((item: any, index: number) => (
-                                    <TouchableOpacity key={index} style={styles.coinItem} onPress={()=>handleBuy(item)}>
-                                        <ImageBackground source={item.image} style={styles.spinImage} />
-                                        <Text style={styles.price}>{ `£ ${item.cost}` }</Text>
-                                    </TouchableOpacity>
-                                ))
-                            }
-                        </View>
-                        <Divider />
-                        <View style={styles.buyCoins}>
-                            {
-                                coinItems.map((item: any, index: number) => (
-                                    <TouchableOpacity key={index} style={styles.coinItem}  onPress={()=>handleBuy(item)}>
-                                        <ImageBackground source={item.image} style={styles.coinImage} />
-                                        <Text style={styles.price}>{ `£ ${item.cost}` }</Text>
-                                    </TouchableOpacity>
-                                ))
-                            }
-                        </View>
-                        <View style={styles.alertButtonGroup}>
-                            <View style={styles.alertButton}>
-                                <ImageButton title="BACK" onPress={() => onCancel() } />
+                        <Text style={styles.alertMessage}></Text>
+                        {/* <Text style={styles.alertMessage}>What do you need to buy now?</Text> */}
+                        <View style={styles.items}>
+
+                            <View style={styles.buySpins}>
+                                {
+                                    spinItems.map((item: any, index: number) => (
+                                        <TouchableOpacity key={index} style={styles.coinItem} onPress={() => handleBuy(item)}>
+                                            <ImageBackground source={item.image} style={styles.spinImage} >
+                                                <Text style={styles.price}>{`£${item.cost}`}</Text>
+                                            </ImageBackground>
+                                        </TouchableOpacity>
+                                    ))
+                                }
+                            </View>
+                            <Divider />
+                            <View style={styles.buyCoins}>
+                                {
+                                    coinItems.map((item: any, index: number) => (
+                                        <TouchableOpacity key={index} style={styles.coinItem} onPress={() => handleBuy(item)}>
+                                            <ImageBackground source={item.image} style={styles.coinImage} >
+                                                <Text style={styles.price}>{`£${item.cost}`}</Text>
+                                            </ImageBackground>
+                                        </TouchableOpacity>
+                                    ))
+                                }
+                            </View>
+                            <View style={styles.alertButtonGroup}>
+                                <View style={styles.alertButton}>
+                                    <ImageButton title="BACK" onPress={() => onCancel()} />
+                                </View>
                             </View>
                         </View>
-                    </View>
+                    </ImageBackground>
                 </View>
             </TouchableOpacity>
         </Modal>
@@ -130,12 +138,12 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         justifyContent: 'center'
     },
-    alert: {
+    body: {
         flex: 1,
         width: '100%',
         // maxWidth: 300,
         marginTop: 100,
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         elevation: 24,
         borderRadius: 2,
         backgroundColor: '#fff'
@@ -173,7 +181,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         left: '50%',
-        top: -20,
+        top: -30,
         transform: [{ translateX: -50 }],
         borderRadius: 50,
     },
@@ -188,6 +196,8 @@ const styles = StyleSheet.create({
     spinImage: {
         width: 100,
         height: 150,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
     },
     buyCoins: {
         flexDirection: 'row',
@@ -200,11 +210,17 @@ const styles = StyleSheet.create({
     coinImage: {
         width: 100,
         height: 150,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
     },
     price: {
-        color: '#05f',
+        color: '#fff',
         fontSize: 18,
         fontWeight: '600',
+        paddingBottom: 12,
+    },
+    items: {
+        paddingHorizontal: 30,
     }
 });
 

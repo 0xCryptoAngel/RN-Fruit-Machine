@@ -2,10 +2,15 @@ import React, { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, Image, Animated, Button, Text, ImageBackground, ImageSourcePropType } from 'react-native';
 import AnimatedCounter from './AnimatedCounter';
-import { ImageButton } from '../buttons';
+import ConfettiCannon from 'react-native-confetti-cannon';
+import { ImageButton, GameButton } from '../buttons';
 import { ImageText, CoinText } from '../text';
 import { ShopDialog, InviteDialog, MyVillageDialog, MapDialog } from '../dialogs';
 import ImageMachine from '../../../static/assets/background-machine.png';
+import ImageSpin from '../../../static/assets/spin_button_small.png';
+import ImageGoldenTicket from '../../../static/assets/golden-ticket.png';
+import ImageShield from '../../../static/assets/shield.jpg';
+
 import { getUser, updateUser } from '../../services/gameService';
 import { UserContext } from '../../App';
 import { sendEmail } from '../../services/emailService';
@@ -58,6 +63,7 @@ const FruitMachine = () => {
     // const initialY = 0;
     const fruitWidth = 100, fruitHeight = 80, fruitCount = 8;
     const totalHeight = fruitCount * fruitHeight;
+    const posY = -(fruitCount + 5) * fruitHeight;
 
     const user = useContext(UserContext);
 
@@ -69,7 +75,7 @@ const FruitMachine = () => {
     const [isGolenTicket, setGoldenTicket] = useState(false);
     const [isVisibleMap, setVisibleMap] = useState(false);
     const [target, setTarget] = useState('Golden ticket');
-
+    const [isCelebrating, setIsCelebrating] = useState(false);
     // const [fruitMachine, setFruitMachine]: any = useState({ // has 3 slots
     //     slot0: 0,// current number in slot data
     //     slot1: 0,
@@ -77,11 +83,15 @@ const FruitMachine = () => {
     // });
 
     const [slotData, setSlotData] = useState([ // slot has 7 fruits
-        [0, 1, 2, 3, 4, 5, 6, 7],// number in fruits list
-        [0, 1, 2, 3, 4, 5, 6, 7],
-        [0, 1, 2, 3, 4, 5, 6, 7],
+        // [0, 1, 2, 3, 4, 5, 6, 7],// number in fruits list
+        // [0, 1, 2, 3, 4, 5, 6, 7],
+        // [0, 1, 2, 3, 4, 5, 6, 7],
+        [6, 3, 2, 7, 4, 0, 1, 5],
+        [7, 1, 5, 3, 0, 6, 2, 4],
+        [2, 4, 6, 5, 3, 1, 7, 0]
+
     ])
-    const [initialY, setInitialY] = useState([0, 0, 0]);
+    const [initialY, setInitialY] = useState([posY, posY, posY]);
     // let initialY = [0, 0, 0];
     const [playerData, setPlayerData] = useState({
         spin_no: 0,
@@ -104,39 +114,52 @@ const FruitMachine = () => {
         let currentIndex = array.length, temporaryValue, randomIndex;
 
         // While there remain elements to shuffle...
-        while (0 !== currentIndex) {
-            // Pick a remaining element...
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex -= 1;
 
-            // And swap it with the current element.
-            temporaryValue = array[currentIndex];
-            array[currentIndex] = array[randomIndex];
-            array[randomIndex] = temporaryValue;
-        }
+        // while (0 !== currentIndex) {
+        //     // Pick a remaining element...
+        //     // randomIndex = Math.floor(Math.random() * currentIndex);
+        //     randomIndex = Math.ceil(Math.random() * (fruitCount - 1));
+        //     currentIndex -= 1;
+
+        //     // And swap it with the current element.
+        //     temporaryValue = array[currentIndex];
+        //     array[currentIndex] = array[randomIndex];
+        //     array[randomIndex] = temporaryValue;
+        // }
 
         return array;
     };
 
+
+
     useEffect(() => {
+        let isMounted = true;
+
         const fetchUserData = async () => {
             try {
                 const player: any = await getUser(user?.email);
-                if (player) {
-                    console.log('User found:', player);
-                    setPlayerData(player);
-                } else {
-                    console.log('User not found');
+                if (isMounted) {
+                    if (player) {
+                        console.log('User found:', player);
+                        setPlayerData(player);
+                    } else {
+                        console.log('User not found');
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
             }
         };
-    
+
         const newSlotData = slotData.map(subArray => shuffleArray([...subArray]));
         setSlotData(newSlotData);
-    
+
         fetchUserData();
+
+        return () => {
+            isMounted = false;
+        };
+
     }, [user]);
 
     const handleSpinResult = async (machineStatus: any) => {
@@ -209,6 +232,7 @@ const FruitMachine = () => {
             // setGoldenTicket(true);
         }
 
+        // bets['Thief'] = 3;
         if (bets['Thief'] == 3) {// gives a chance to steal coins
             setTarget('Coin');
             setVisibleMap(true);
@@ -224,19 +248,23 @@ const FruitMachine = () => {
 
         // save result
         const newData = {
-            spin_no: Math.min(playerData.spin_no + 1, playerData.spins),
+            // spin_no: Math.min(playerData.spin_no + 1, playerData.spins),
             coins: playerData.coins + coinPlus,
-            spins: playerData.spins + spinPlus,
+            spins: playerData.spins - 1 + spinPlus,
             shield: playerData.shield + shieldPlus,
         }
         console.log(newData);
         updateUser(user?.email, newData)
             .then(() => {
-                console.log('User updated successfully');
+                // console.log('User updated successfully');
                 setPlayerData({
                     ...playerData,
                     ...newData
                 });
+
+                // setIsCelebrating(true);
+                // setTimeout(() => setIsCelebrating(false), 3000); 
+
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -253,16 +281,17 @@ const FruitMachine = () => {
         animations.forEach((anim, index) => {
             anim.setValue(initialY[index]);
 
-            let randomNumber = Math.ceil(Math.random() * (fruitCount - 1));
-            let finalPosition = -randomNumber * fruitHeight;
-            if (finalPosition == initialY[index]) {
-                randomNumber += 2;
-                finalPosition = -randomNumber * fruitHeight;
-            }
+            const randomNumber = Math.ceil(Math.random() * (fruitCount - 1));
+            // const randomNumber = 2;
+            const finalPosition = initialY[index] + randomNumber * fruitHeight;
+           
             currentSlotY[index] = finalPosition;
-
-            // slotStatus[`slot${index}`] = (fruitMachine[`slot${index}`] + randomNumber) % fruitCount;
-            slotStatus[`slot${index}`] = (randomNumber + 1) % fruitCount;
+            if (finalPosition >= -(fruitCount - 3 + 1) * fruitHeight) {
+                currentSlotY[index] = finalPosition - fruitCount * fruitHeight;
+            }
+            // console.log("finalPosition", finalPosition, initialY[index], randomNumber);
+            
+            slotStatus[`slot${index}`] = ( -currentSlotY[index] / fruitHeight + 1) % fruitCount;
             Animated.timing(anim, {
                 toValue: finalPosition,
                 duration: 500 + (index * 200),
@@ -371,13 +400,17 @@ const FruitMachine = () => {
             })
         }
     }
-    const getOwnedDays = (hasFrom: any) => {
+    const getOwnedDays = (hasFrom: number) => {
         let result = 0;
         const currentTimestamp = Date.now();
-        const differenceInMilliseconds = currentTimestamp - hasFrom;
+        // Add 30 days in milliseconds
+        const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
+        const hasFromPlus30Days = hasFrom + thirtyDaysInMillis;
+        const differenceInMilliseconds = hasFromPlus30Days - currentTimestamp;
         result = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
         return `${result} days`;
     }
+
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.machine} source={ImageMachine as ImageSourcePropType} resizeMode="stretch" >
@@ -385,68 +418,76 @@ const FruitMachine = () => {
                     {animations.map((anim, index) => (
                         <Animated.View key={index} style={[styles.slot, { transform: [{ translateY: anim }] }]}>
                             {slotData[index].map((fruitNo, fruitIndex) => (
-                                <Image key={fruitIndex} source={fruitList[fruitNo].image} style={styles.fruitImage} />
+                                <View style={styles.imageContainer} key={fruitIndex}>
+                                    <Image source={fruitList[fruitNo].image} style={styles.fruitImage} />
+                                </View>
                             ))}
                             {slotData[index].map((fruitNo, fruitIndex) => (
-                                <Image key={fruitList.length + fruitIndex} source={fruitList[fruitNo].image} style={styles.fruitImage} />
+                                <View style={styles.imageContainer} key={fruitList.length + fruitIndex} >
+                                    <Image source={fruitList[fruitNo].image} style={styles.fruitImage} />
+                                </View>
                             ))}
                         </Animated.View>
                     ))}
                 </View>
             </ImageBackground>
             <View style={styles.gameDetail}>
-                <View style={styles.infoRow}>
-                    <View style={styles.textGroup}>
-                        <Text style={styles.labelText}>{`Spins`}</Text>
-                        <Text style={styles.valueText}>{`${playerData.spins}`}</Text>
+                <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+                    <View style={styles.infoRow}>
+                        <View style={styles.textGroup}>
+                            <Text style={styles.labelText}>{`Spins`}</Text>
+                            <Text style={styles.valueText}>{`${playerData.spins}`}</Text>
+                        </View>
                     </View>
-                    <View style={styles.textGroup}>
-                        <Text style={styles.labelText}>{`Available`}</Text>
-                        <Text style={styles.valueText}>{`${playerData.spins - playerData.spin_no}`}</Text>
+                    <View style={styles.infoRow}>
+                        <View style={styles.textGroup}>
+                            <Text style={styles.labelText}>{`Coins`}</Text>
+                            <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.infoRow}>
+                        <View style={styles.textGroup}>
+                            <Text style={styles.labelText}>{`Timer`}</Text>
+                            <Text style={styles.valueText}>{playerData.golden_ticket_owned ? getOwnedDays(playerData.hasFrom) : '0 day'}</Text>
+                        </View>
+                    </View>
+
+                </View>
+                <View style={{ flex: 1 }}>
+                    <View style={styles.inventory}>
+                        {
+                            playerData.golden_ticket_owned && (
+                                <View style={{ padding: 5 }}>
+                                    {/* <Image source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} /> */}
+                                    <ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
+                                </View>
+                            )
+                        }
+                        {
+                            playerData.shield > 0 && (
+                                <View style={{ padding: 5 }}>
+                                    <Image source={ImageShield as ImageSourcePropType} style={styles.smallImage} />
+                                </View>
+                            )
+                        }
                     </View>
                 </View>
-                <View style={styles.infoRow}>
-                    <View style={styles.textGroup}>
-                        <Text style={styles.labelText}>{`Coins`}</Text>
-                        <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
-                    </View>
-                    <View style={styles.textGroup}>
-                        <Text style={styles.labelText}>{`Shield     `}</Text>
-                        <Text style={styles.valueText}>{`${playerData.shield}`}</Text>
-                    </View>
-                </View>
-                <View style={styles.infoRow}>
-                    <View style={styles.textGroup}>
-                        <Text style={styles.labelText}>{`Golden Ticket`}</Text>
-                        <Text style={styles.valueText}>{`${playerData.golden_ticket_owned ? 'Yes' : "No"}`}</Text>
-                    </View>
-                    <View style={styles.textGroup}>
-                        <Text style={styles.labelText}>{`For`}</Text>
-                        <Text style={styles.valueText}>{ playerData.golden_ticket_owned ? getOwnedDays(playerData.hasFrom): '0 day'}</Text>
-                    </View>
-                </View>
+
             </View>
-            {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
-                <View style={styles.counterContainer}>
-                    <Text style={{ fontSize: 16, color: '#fff', paddingHorizontal: 5, fontFamily: 'Roboto' }}>{`Spins(${playerData.spins})`}</Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <AnimatedCounter targetValue={playerData.spins - playerData.spin_no} duration={5000} />
-                    </View>
-                </View>
-                <View style={styles.coinContainer}>
-                    <CoinText background={require('../../../static/assets/coin.jpg')} title={playerData.coins} />
-                </View>
-            </View> */}
-            <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} />
+
+            <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} />
+            {/* <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} /> */}
             <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 10, }} />
             <ImageButton title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} />
             {/* <ImageButton title={"BACK"} onPress={() => navigation.navigate('Home')} disabled={spinning} style={{ marginTop: 10, }} /> */}
 
+
             <ShopDialog isOpen={isVisible} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
-
             <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} />
             <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
+
+            {isCelebrating && <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />}
         </View>
     );
 };
@@ -477,12 +518,20 @@ const styles = StyleSheet.create({
     slot: {
         width: 100,
     },
+    imageContainer: {
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // borderColor: '#fed49a',
+        // borderWidth: 1,
+    },
     fruitImage: {
-        width: 100,
+        width: 80,
         height: 80,
         marginVertical: 0,
-        borderColor: '#fed49a',
-        borderWidth: 1,
+        // borderColor: '#fed49a',
+        // borderWidth: 1,
+        // resizeMode: 'contain', 
     },
     counterContainer: {
         flexDirection: 'row',
@@ -510,7 +559,7 @@ const styles = StyleSheet.create({
     },
     gameDetail: {
         width: '100%',
-        // flexDirection: 'row',
+        flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 5,
@@ -528,8 +577,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     textGroup: {
-        // flex: 1,
-        width: "50%",
+        width: "100%",
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'baseline',
@@ -545,7 +593,25 @@ const styles = StyleSheet.create({
         color: '#f80',
         paddingHorizontal: 5,
         fontFamily: 'Roboto'
-    }
+    },
+    inventory: {
+        // flex: 1,
+        // width: "50%",
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingVertical: 5,
+    },
+    smallImage: {
+        width: 70,
+        height: 70,
+        marginVertical: 0,
+        borderColor: '#fed49a',
+        borderWidth: 1,
+        marginRight: 5,
+        // resizeMode: 'contain',
+    },
+
 });
 
 export default FruitMachine;
