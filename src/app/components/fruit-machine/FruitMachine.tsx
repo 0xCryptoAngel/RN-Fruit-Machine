@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, Image, Animated, Button, Text, ImageBackground, ImageSourcePropType } from 'react-native';
+import { View, StyleSheet, Image, Animated, Easing, Text, ImageBackground, ImageSourcePropType } from 'react-native';
 import AnimatedCounter from './AnimatedCounter';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { ImageButton, GameButton } from '../buttons';
@@ -8,8 +8,10 @@ import { ImageText, CoinText } from '../text';
 import { ShopDialog, InviteDialog, MyVillageDialog, MapDialog } from '../dialogs';
 import ImageMachine from '../../../static/assets/background-machine.png';
 import ImageSpin from '../../../static/assets/spin_button_small.png';
-import ImageGoldenTicket from '../../../static/assets/golden-ticket.png';
-import ImageShield from '../../../static/assets/shield.jpg';
+import ImageGoldenTicket from '../../../static/assets/golden-ticket-small.png';
+import ImageShield from '../../../static/assets/shield.png';
+import ImageShop from '../../../static/assets/shop-2.png';
+import ImageBonus from '../../../static/assets/business-earning.png';
 
 import { getUser, updateUser } from '../../services/gameService';
 import { UserContext } from '../../App';
@@ -20,32 +22,32 @@ const fruitList = [
     {
         name: 'Shield',
         value: 'Shield',
-        image: require('../../../static/assets/shield.jpg'),
+        image: require('../../../static/assets/shield.png'),
     },
     {
         name: 'Golden ticket',
         value: 'Golden ticket',
-        image: require('../../../static/assets/golden-ticket.jpg'),
+        image: require('../../../static/assets/golden-ticket.png'),
     },
     {
         name: 'Thief',
         value: 'Thief',
-        image: require('../../../static/assets/thief.jpg'),
+        image: require('../../../static/assets/thief.png'),
     },
     {
         name: 'More spins',
         value: 'More spins',
-        image: require('../../../static/assets/more-spins.jpg'),
+        image: require('../../../static/assets/more-spins.png'),
     },
     {
         name: 'Chocolate',
         value: 'Chocolate',
-        image: require('../../../static/assets/cholocalte.jpg'),
+        image: require('../../../static/assets/cholocalte.png'),
     },
     {
         name: 'Bag of chocolates',
         value: 'Bag of chocolates',
-        image: require('../../../static/assets/bag_of_chocolates.jpg'),
+        image: require('../../../static/assets/bag_of_chocolates.png'),
     },
     {
         name: 'Hat',
@@ -55,19 +57,19 @@ const fruitList = [
     {
         name: 'Question mark',
         value: 'Question mark',
-        image: require('../../../static/assets/question_mark.jpg'),
+        image: require('../../../static/assets/question_mark.png'),
     },
 ]
 
 const FruitMachine = () => {
-    // const initialY = 0;
+
     const fruitWidth = 100, fruitHeight = 80, fruitCount = 8;
-    const totalHeight = fruitCount * fruitHeight;
-    const posY = -(fruitCount + 5) * fruitHeight;
+    const posY = -(fruitCount + 5) * fruitHeight;// initial position
 
     const user = useContext(UserContext);
 
     const navigation: any = useNavigation();
+
 
     const [spinning, setSpinning] = useState(false);
     const [isVisible, setVisible] = useState(false);
@@ -76,12 +78,8 @@ const FruitMachine = () => {
     const [isVisibleMap, setVisibleMap] = useState(false);
     const [target, setTarget] = useState('Golden ticket');
     const [isCelebrating, setIsCelebrating] = useState(false);
-    // const [fruitMachine, setFruitMachine]: any = useState({ // has 3 slots
-    //     slot0: 0,// current number in slot data
-    //     slot1: 0,
-    //     slot2: 0,
-    // });
-
+    const [isAnimText, setAnimText] = useState(false);
+    const [infoText, setInfoText] = useState("Welcome to GolenTicket!")
     const [slotData, setSlotData] = useState([ // slot has 7 fruits
         // [0, 1, 2, 3, 4, 5, 6, 7],// number in fruits list
         // [0, 1, 2, 3, 4, 5, 6, 7],
@@ -107,7 +105,10 @@ const FruitMachine = () => {
         new Animated.Value(initialY[0]),
         new Animated.Value(initialY[1]),
         new Animated.Value(initialY[2]),
-    ]).current;
+    ]).current; // aniamtion for fruit
+
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0)).current;
 
     // Function to shuffle an array
     const shuffleArray = (array: any) => {
@@ -129,8 +130,6 @@ const FruitMachine = () => {
 
         return array;
     };
-
-
 
     useEffect(() => {
         let isMounted = true;
@@ -162,7 +161,36 @@ const FruitMachine = () => {
 
     }, [user]);
 
+    useEffect(() => {
+
+        fadeAnim.setValue(0);
+        Animated.timing(
+            fadeAnim,
+            {
+                toValue: 1,
+                duration: 1000,
+                easing: Easing.ease,
+                useNativeDriver: true,
+            }
+        ).start();
+
+        // Scale animation
+        scaleAnim.setValue(0);
+        Animated.timing(
+            scaleAnim,
+            {
+                toValue: 1,
+                duration: 1000,
+                easing: Easing.elastic(2),
+                useNativeDriver: true,
+            }
+        ).start();
+
+    }, [isAnimText]);
+
     const handleSpinResult = async (machineStatus: any) => {
+        setInfoText('Welcome to Golden Ticket');
+
         let coinPlus = 0;
         let spinPlus = 0;
         let shieldPlus = 0;
@@ -225,26 +253,55 @@ const FruitMachine = () => {
 
         if (bets['Shield'] == 3) {// protect from attackers
             shieldPlus += 3;
+
+            // Update infomation
+            setInfoText(`You won Shield`);
+            setAnimText(!isAnimText);
+
         }
         if (bets['Golden ticket'] == 3) {// gives a chance to steal the ticket
+            // Update infomation
+            setInfoText(`You won Golden ticket`);
+            setAnimText(!isAnimText);
+
             setTarget('Golden ticket');
             setVisibleMap(true);
             // setGoldenTicket(true);
+
+            setIsCelebrating(true);
+            setTimeout(() => setIsCelebrating(false), 1000);
+
         }
 
         // bets['Thief'] = 3;
         if (bets['Thief'] == 3) {// gives a chance to steal coins
+            // Update infomation
+            setInfoText(`You won Thief`);
+            setAnimText(!isAnimText);
+
             setTarget('Coin');
             setVisibleMap(true);
         }
         if (bets['More spins'] == 3) {// gives more spin
+            // Update infomation
+            setInfoText(`You won More spins`);
+            setAnimText(!isAnimText);
+
             spinPlus += 200;
         }
 
         if (bets['Question mark'] == 3) {// gives more spin
+            // Update infomation
+            setInfoText(`You won Random`);
+            setAnimText(!isAnimText);
+
             spinPlus += Math.ceil(Math.random() * 10) * 50;
             coinPlus += Math.ceil(Math.random() * 10) * 500;
         }
+
+        // // Update infomation
+        // setInfoText(`Got ${spinPlus} Spins and ${coinPlus} Coins`);
+        setAnimText(!isAnimText);
 
         // save result
         const newData = {
@@ -262,8 +319,6 @@ const FruitMachine = () => {
                     ...newData
                 });
 
-                // setIsCelebrating(true);
-                // setTimeout(() => setIsCelebrating(false), 3000); 
 
             })
             .catch((error) => {
@@ -281,20 +336,21 @@ const FruitMachine = () => {
         animations.forEach((anim, index) => {
             anim.setValue(initialY[index]);
 
-            const randomNumber = Math.ceil(Math.random() * (fruitCount - 1));
+            const randomNumber = Math.ceil(Math.random() * (fruitCount - 4)) + 3;
             // const randomNumber = 2;
             const finalPosition = initialY[index] + randomNumber * fruitHeight;
-           
+
             currentSlotY[index] = finalPosition;
             if (finalPosition >= -(fruitCount - 3 + 1) * fruitHeight) {
-                currentSlotY[index] = finalPosition - fruitCount  * fruitHeight;
+                currentSlotY[index] = finalPosition - fruitCount * fruitHeight;
             }
             // console.log("finalPosition", finalPosition, initialY[index], randomNumber);
-            
-            slotStatus[`slot${index}`] = ( -currentSlotY[index] / fruitHeight + 1) % fruitCount;
+
+            slotStatus[`slot${index}`] = (-currentSlotY[index] / fruitHeight + 1) % fruitCount;
             Animated.timing(anim, {
                 toValue: finalPosition,
-                duration: 500 + (index * 200),
+                duration: 500,// + (index * 200),
+                easing: Easing.elastic(0.5),
                 useNativeDriver: true,
             }).start(() => {
                 if (index === animations.length - 1) {
@@ -452,33 +508,54 @@ const FruitMachine = () => {
                         </View>
                     </View>
 
+
                 </View>
                 <View style={{ flex: 1 }}>
                     <View style={styles.inventory}>
-                        {
-                            playerData.golden_ticket_owned && (
-                                <View style={{ padding: 5 }}>
-                                    {/* <Image source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} /> */}
-                                    <ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
-                                </View>
-                            )
-                        }
-                        {
-                            playerData.shield > 0 && (
-                                <View style={{ padding: 5 }}>
+                        <View style={styles.inventoryImage}>
+                            {
+                                playerData.golden_ticket_owned && (
+                                    < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
+                                )
+                            }
+                        </View>
+                        <View style={styles.inventoryImage}>
+                            {
+                                playerData.shield > 0 && (
                                     <Image source={ImageShield as ImageSourcePropType} style={styles.smallImage} />
-                                </View>
-                            )
-                        }
+                                )
+                            }
+                        </View>
                     </View>
                 </View>
 
+
+            </View>
+            
+            <View style={styles.infoPanel}>
+                <Animated.Text
+                    style={[styles.infoText,
+                    {
+                        opacity: fadeAnim,
+                        transform: [{ scale: scaleAnim }]
+                    }]}>
+                    {infoText}
+                </Animated.Text>
             </View>
 
             <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} />
+            <View style={{ position: 'absolute', top: -100, right: -40 }}>
+                <GameButton background={ImageShop} title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} />
+            </View>
+            <View style={{ position: 'absolute', top: -40, right: -40 }}>
+                <GameButton background={ImageBonus} title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} />
+            </View>
+
             {/* <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} /> */}
-            <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 10, }} />
-            <ImageButton title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} />
+            {/* <View style={{ position: 'absolute', top: 0, right: 0 }}> */}
+            {/* <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 10, }} /> */}
+            {/* </View> */}
+            {/* <ImageButton title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} /> */}
             {/* <ImageButton title={"BACK"} onPress={() => navigation.navigate('Home')} disabled={spinning} style={{ marginTop: 10, }} /> */}
 
 
@@ -487,13 +564,14 @@ const FruitMachine = () => {
             <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} />
             <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
 
-            {isCelebrating && <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />}
+            {isCelebrating && <ConfettiCannon count={100} origin={{ x: -10, y: 0 }} />}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        position: 'relative',
         flex: 1,
         width: '100%',
         alignItems: 'center',
@@ -513,7 +591,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         marginVertical: 10,
         borderRadius: 10,
-        marginTop: 20,
+        marginTop: 35,
     },
     slot: {
         width: 100,
@@ -526,8 +604,8 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
     },
     fruitImage: {
-        width: 80,
-        height: 80,
+        width: 64,
+        height: 64,
         marginVertical: 0,
         // borderColor: '#fed49a',
         // borderWidth: 1,
@@ -568,7 +646,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 2,
         borderColor: '#fff',
-        marginVertical: 20,
+        marginTop: 20,
+        marginBottom: 25,
     },
     infoRow: {
         width: '100%',
@@ -606,12 +685,36 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         marginVertical: 0,
-        borderColor: '#fed49a',
-        borderWidth: 1,
+        // borderColor: '#fed49a',
+        // borderWidth: 1,
         marginRight: 5,
         // resizeMode: 'contain',
     },
-
+    infoPanel: {
+        position: 'absolute',
+        top: 15,
+        // right: -40,
+        width: '100%',
+        marginBottom: 20,
+        // backgroundColor: '#2C3E50',
+        // borderRadius: 5,
+        // borderWidth: 2,
+        borderColor: '#fff',
+    },
+    infoText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginVertical: 10,
+        color: '#000', // '#FFD700',
+    },
+    inventoryImage: {
+        width: 70,
+        height: 70,
+        // padding: 5,
+        borderWidth: 1,
+        borderColor: '#CCC',
+    }
 });
 
 export default FruitMachine;

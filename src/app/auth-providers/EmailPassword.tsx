@@ -75,7 +75,7 @@ function EmailPassword(): JSX.Element {
     <View style={styles.form}>
       <Image
         style={styles.icon}
-        source={require('../../static/assets/golden-ticket.jpg')}
+        source={require('../../static/assets/golden-ticket.png')}
       />
       <TextInput
         value={email}

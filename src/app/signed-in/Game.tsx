@@ -48,10 +48,11 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     titleGroup: {
-        marginTop: 30,
+        marginTop: 40,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        marginBottom: 40,
     },
     ticket: {
         justifyContent: 'center',
@@ -67,6 +68,9 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         color: 'yellow',
+        textShadowColor: 'rgba(0, 0, 0, 0.75)', 
+        textShadowOffset: { width: 2, height: 2 }, 
+        textShadowRadius: 5, 
 
     },
     divider: {
