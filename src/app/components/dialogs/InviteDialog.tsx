@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, Modal, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground } from 'react-native';
 
-import staticImage from '../../../static/assets/coin.jpg';
+import staticImage from '../../../static/assets/golden-ticket-small.png';
 import { ImageButton } from '../buttons';
 
 const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {

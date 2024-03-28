@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, Modal, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground } from 'react-native';
 
-import staticImage from '../../../static/assets/coin.jpg';
+import staticImage from '../../../static/assets/golden-ticket-small.png';
 import ImageCoin600k from '../../../static/assets/600k.jpg'
 import ImageCoin1m from '../../../static/assets/1m.jpg'
 import ImageCoin4m from '../../../static/assets/4m.jpg'

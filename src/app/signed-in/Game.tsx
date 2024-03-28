@@ -27,12 +27,9 @@ function Game({route}: any) {
     return (
         <Fragment>
             <ImageBackground style={styles.container} source={Background as ImageSourcePropType}>
-                <View style={styles.titleGroup} >
-                    {/* <View style={styles.ticket}>
-                        <Image source={GoldenTicket as ImageSourcePropType} style={styles.logo} />
-                    </View> */}
+                {/* <View style={styles.titleGroup} >
                     <Text style={styles.title}>Golden Ticket</Text>
-                </View>
+                </View> */}
                 <FruitMachine key={refreshKey}/>
             </ImageBackground>
         </Fragment>

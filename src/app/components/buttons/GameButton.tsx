@@ -13,9 +13,9 @@ function GameButton({ background, title, onPress, style }: any) {
     const linkTo = useLinkTo();
 
     return (
-        <TouchableOpacity style={[styles.container, style]} onPress={() => onPress && onPress()}>
+        <TouchableOpacity style={[styles.container, ]} onPress={() => onPress && onPress()}>
             {/* <Image source={background} style={styles.button} /> */}
-            <ImageBackground style={styles.button} source={background} resizeMode='contain'/>
+            <ImageBackground style={[styles.button, style]} source={background} resizeMode='contain'/>
             {/* <Text style={styles.title} >
                 {title || 'Image Button'}
             </Text> */}

@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { CardField, useStripe, useConfirmPayment } from '@stripe/stripe-react-native';
-import { View, StyleSheet, Button, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Button, Text, TouchableOpacity, ImageSourcePropType, Image } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
 import appConfig from '../util/config';
 import { getUser, updateUser } from '../services/gameService';
 import { UserContext } from '../App';
+import ImageLogoText from '../../static/assets/logo-text.png';
 
 function Payment({ route }: any) {
 
@@ -14,7 +16,7 @@ function Payment({ route }: any) {
 
     const params = route.params;
     console.log(params);
-    
+
     const { confirmPayment } = useStripe();
 
     const createPaymentIntent = async () => {
@@ -72,7 +74,7 @@ function Payment({ route }: any) {
                             .then(() => {
                                 console.log('User updated successfully');
                                 // navigation.navigate('Game');
-                                
+
                                 navigation.navigate('Game', {
                                     'payment': 'success',
                                     'amount': params.amount,
@@ -106,7 +108,9 @@ function Payment({ route }: any) {
         >
             {/* Your app code here */}
             <View style={styles.container}>
-
+                <View style={{ marginTop: 30 }}>
+                    <Image source={ImageLogoText as ImageSourcePropType} style={styles.logoImage} />
+                </View>
                 <Text style={styles.title}>Payment Details</Text>
                 <View style={styles.paymentDetail}>
                     <Text style={styles.infoText}>Item: {params.item} </Text>
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "700",
         textAlign: 'center',
-        paddingTop: 50,
+        paddingTop: 20,
         color: '#00f',
     },
     infoText: {
@@ -195,6 +199,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 50,
         paddingVertical: 10,
         marginVertical: 5,
+    },
+    logoImage: {
+        width: 300,
+        height: 70,
     },
 })
 

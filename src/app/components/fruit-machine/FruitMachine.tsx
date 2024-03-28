@@ -12,6 +12,12 @@ import ImageGoldenTicket from '../../../static/assets/golden-ticket-small.png';
 import ImageShield from '../../../static/assets/shield.png';
 import ImageShop from '../../../static/assets/shop-2.png';
 import ImageBonus from '../../../static/assets/business-earning.png';
+import ImageCoinBack from '../../../static/assets/coin-bar.png';
+import ImageTimerBack from '../../../static/assets/timer-bar.png';
+import ImageSpinBack from '../../../static/assets/spin-bar.png';
+import ImageGoldenTicketBlank from '../../../static/assets/golden-ticket-blank.png';
+import ImageShieldBlank from '../../../static/assets/shield-blank.png';
+import ImageLogoText from '../../../static/assets/logo-text.png';
 
 import { getUser, updateUser } from '../../services/gameService';
 import { UserContext } from '../../App';
@@ -469,6 +475,36 @@ const FruitMachine = () => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.gameDetail}>
+                <View style={styles.inventory}>
+                    <ImageBackground style={styles.coinBar} source={ImageCoinBack as ImageSourcePropType} resizeMode="contain">
+                        <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
+                    </ImageBackground>
+                    <View style={styles.inventoryImage}>
+                        {
+                            playerData.golden_ticket_owned ? (
+                                < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
+                            ) : (
+                                < ImageBackground source={ImageGoldenTicketBlank as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
+                            )
+                        }
+                    </View>
+                    <View style={styles.inventoryImage}>
+                        {
+                            playerData.shield > 0 ? (
+                                <Image source={ImageShield as ImageSourcePropType} style={styles.smallImage} />
+                            ) : (
+                                <Image source={ImageShieldBlank as ImageSourcePropType} style={styles.smallImage} />
+                            )
+                        }
+                    </View>
+                </View>
+                <View style={styles.inventory}>
+                    <ImageBackground style={styles.timerBar} source={ImageTimerBack as ImageSourcePropType} resizeMode="contain">
+                        <Text style={styles.valueText}>{playerData.golden_ticket_owned ? getOwnedDays(playerData.hasFrom) : ''}</Text>
+                    </ImageBackground>
+                </View>
+            </View>
             <ImageBackground style={styles.machine} source={ImageMachine as ImageSourcePropType} resizeMode="stretch" >
                 <View style={styles.slotsContainer} >
                     {animations.map((anim, index) => (
@@ -487,51 +523,10 @@ const FruitMachine = () => {
                     ))}
                 </View>
             </ImageBackground>
-            <View style={styles.gameDetail}>
-                <View style={{ flex: 1, justifyContent: 'flex-start' }}>
-                    <View style={styles.infoRow}>
-                        <View style={styles.textGroup}>
-                            <Text style={styles.labelText}>{`Spins`}</Text>
-                            <Text style={styles.valueText}>{`${playerData.spins}`}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <View style={styles.textGroup}>
-                            <Text style={styles.labelText}>{`Coins`}</Text>
-                            <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <View style={styles.textGroup}>
-                            <Text style={styles.labelText}>{`Timer`}</Text>
-                            <Text style={styles.valueText}>{playerData.golden_ticket_owned ? getOwnedDays(playerData.hasFrom) : '0 day'}</Text>
-                        </View>
-                    </View>
 
-
-                </View>
-                <View style={{ flex: 1 }}>
-                    <View style={styles.inventory}>
-                        <View style={styles.inventoryImage}>
-                            {
-                                playerData.golden_ticket_owned && (
-                                    < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
-                                )
-                            }
-                        </View>
-                        <View style={styles.inventoryImage}>
-                            {
-                                playerData.shield > 0 && (
-                                    <Image source={ImageShield as ImageSourcePropType} style={styles.smallImage} />
-                                )
-                            }
-                        </View>
-                    </View>
-                </View>
-
-
+            <View style={{ position: 'absolute', top: 120 }}>
+                <Image source={ImageLogoText as ImageSourcePropType} style={styles.logoImage} />
             </View>
-            
             <View style={styles.infoPanel}>
                 <Animated.Text
                     style={[styles.infoText,
@@ -543,11 +538,16 @@ const FruitMachine = () => {
                 </Animated.Text>
             </View>
 
-            <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} />
-            <View style={{ position: 'absolute', top: -100, right: -40 }}>
+            <ImageBackground style={styles.spinBar} source={ImageSpinBack as ImageSourcePropType} resizeMode="contain">
+                <Text style={styles.valueText}>{`${playerData.spins}`}</Text>
+            </ImageBackground>
+
+            <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} style={{ width: 300, height: 100}}/>
+
+            <View style={{ position: 'absolute', top: 30, right: -40 }}>
                 <GameButton background={ImageShop} title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} />
             </View>
-            <View style={{ position: 'absolute', top: -40, right: -40 }}>
+            <View style={{ position: 'absolute', top: 90, right: -40 }}>
                 <GameButton background={ImageBonus} title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} />
             </View>
 
@@ -637,16 +637,16 @@ const styles = StyleSheet.create({
     },
     gameDetail: {
         width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
         paddingVertical: 5,
         paddingHorizontal: 10,
-        backgroundColor: '#410577',
-        borderRadius: 5,
-        borderWidth: 2,
-        borderColor: '#fff',
-        marginTop: 20,
+        // backgroundColor: '#410577',
+        // borderRadius: 5,
+        // borderWidth: 2,
+        // borderColor: '#fff',
+        marginTop: 30,
         marginBottom: 25,
     },
     infoRow: {
@@ -669,21 +669,23 @@ const styles = StyleSheet.create({
     },
     valueText: {
         fontSize: 20,
-        color: '#f80',
+        fontWeight: '700',
+        color: '#410577',
         paddingHorizontal: 5,
         fontFamily: 'Roboto'
     },
     inventory: {
         // flex: 1,
         // width: "50%",
+        height: 40,
         flexDirection: 'row',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        paddingVertical: 5,
+        paddingVertical: 1,
     },
     smallImage: {
-        width: 70,
-        height: 70,
+        width: 50,
+        height: 50,
         marginVertical: 0,
         // borderColor: '#fed49a',
         // borderWidth: 1,
@@ -692,7 +694,7 @@ const styles = StyleSheet.create({
     },
     infoPanel: {
         position: 'absolute',
-        top: 15,
+        top: 160,
         // right: -40,
         width: '100%',
         marginBottom: 20,
@@ -706,14 +708,39 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 10,
-        color: '#000', // '#FFD700',
+        color: '#410577', // '#FFD700',
     },
     inventoryImage: {
-        width: 70,
-        height: 70,
+        width: 50,
+        height: 50,
         // padding: 5,
-        borderWidth: 1,
-        borderColor: '#CCC',
+        // borderWidth: 1,
+        // borderColor: '#CCC',
+    },
+    coinBar: {
+        width: 200,
+        height: 50,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    timerBar: {
+        width: 170,
+        height: 60,
+        paddingHorizontal: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    spinBar: {
+        width: 200,
+        height: 80,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    logoImage: {
+        width: 300,
+        height: 70,
     }
 });
 
