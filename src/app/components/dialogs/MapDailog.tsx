@@ -71,9 +71,25 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
             selectedBuilding: building.value
         })
     }
+    const handleAttack =async (village:any) => {
+        console.log('village', village);
+        setFormData({
+            ...formData,
+            ...village,
+            selectedVillage: village.userId,
+            selectedBuilding: ''
+        });
+
+        onOK({
+            ...formData,
+            ...village,
+            selectedVillage: village.userId,
+            selectedBuilding: ''
+        });
+    }
     useEffect(() => {
         if (!isOpen) return;
-        
+
         setFormData({
             selectedVillage: 'None',
             selectedBuilding: 'None',
@@ -85,7 +101,7 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
 
             const newVillages: any = [];
             users?.map((user) => {
-                if(user.email == email) return;
+                if (user.email == email) return;
                 newVillages.push({
                     ...user,
                     userId: user.email,
@@ -106,12 +122,12 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
             <TouchableOpacity style={styles.modalContainer} onPressOut={() => { }} onPress={() => { }}>
                 <View style={styles.modalView}>
                     <View style={styles.alert}>
-                        <Text style={styles.alertMessage}>{`Sellect village&building to get ${target}.`}</Text>
+                        <Text style={styles.alertMessage}>{`Attack the villages to get ${target}.`}</Text>
                         <ScrollView style={styles.villages}>
                             {villages?.map((village: any) => (
                                 <View style={styles.buildings} key={village.userId}>
                                     <Text style={styles.vallageName}>{village.name}</Text>
-                                    {
+                                    {/* {
                                         buildings.map((item: any, index: number) => (
                                             <TouchableOpacity key={index} style={styles.coinItem} onPress={() => handleSelect(village, item)}>
                                                 <ImageBackground source={item.image} style={styles.spinImage}>
@@ -125,16 +141,26 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
                                                 }}> {item.title}</Text>
                                             </TouchableOpacity>
                                         ))
-                                    }
+                                    } */}
+                                    <TouchableOpacity style={styles.actionButton} onPress={() => handleAttack(village)}>
+                                        {/* <ImageBackground source={item.image} style={styles.spinImage} /> */}
+                                        <Text style={{
+                                            marginVertical: 5,
+                                            textAlign: 'center',
+                                            fontSize: 14,
+                                            fontWeight: 'bold',
+                                            color: '#f00',
+                                        }}> Attack Now</Text>
+                                    </TouchableOpacity>
                                 </View>
                             ))}
                         </ScrollView>
 
                         <Divider />
                         <View style={styles.alertButtonGroup}>
-                            <View style={styles.alertButton}>
+                            {/* <View style={styles.alertButton}>
                                 <ImageButton title="Confirm" onPress={() => onOK(formData)} />
-                            </View>
+                            </View> */}
                             <View style={styles.alertButton}>
                                 <ImageButton title="BACK" onPress={() => onCancel()} />
                             </View>
@@ -254,8 +280,12 @@ const styles = StyleSheet.create({
     },
     vallageName: {
         fontSize: 16,
-        width: 70,
+        width: 150,
         fontWeight: 'bold',
-    }
+    },
+    actionButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
 

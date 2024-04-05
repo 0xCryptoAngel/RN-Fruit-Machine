@@ -18,6 +18,7 @@ import ImageSpinBack from '../../../static/assets/spin-bar.png';
 import ImageGoldenTicketBlank from '../../../static/assets/golden-ticket-blank.png';
 import ImageShieldBlank from '../../../static/assets/shield-blank.png';
 import ImageLogoText from '../../../static/assets/logo-text.png';
+import ImageMyVillage from '../../../static/assets/myvillage.png';
 
 import { getUser, updateUser } from '../../services/gameService';
 import { UserContext } from '../../App';
@@ -82,6 +83,8 @@ const FruitMachine = () => {
     const [isVisibleInvite, setVisibleInvite] = useState(false);
     const [isGolenTicket, setGoldenTicket] = useState(false);
     const [isVisibleMap, setVisibleMap] = useState(false);
+    const [isVisibleVillage, setVisibleVillage] = useState(false);
+
     const [target, setTarget] = useState('Golden ticket');
     const [isCelebrating, setIsCelebrating] = useState(false);
     const [isAnimText, setAnimText] = useState(false);
@@ -97,7 +100,7 @@ const FruitMachine = () => {
     ])
     const [initialY, setInitialY] = useState([posY, posY, posY]);
     // let initialY = [0, 0, 0];
-    const [playerData, setPlayerData] = useState({
+    const [playerData, setPlayerData]: any = useState({
         spin_no: 0,
         spins: 0,
         coins: 0,
@@ -105,6 +108,7 @@ const FruitMachine = () => {
         golden_ticket_owned: false,
         golden_ticket_building: 'not yet',
         hasFrom: Date.now(),
+        cardInfo: {}
     })
 
     const animations = useRef([
@@ -270,23 +274,24 @@ const FruitMachine = () => {
             setInfoText(`You won Golden ticket`);
             setAnimText(!isAnimText);
 
-            setTarget('Golden ticket');
-            setVisibleMap(true);
-            // setGoldenTicket(true);
+            // setTarget('Golden ticket');
+            // setVisibleMap(true);
+            openMapDailog('Golden ticket');
+
 
             setIsCelebrating(true);
             setTimeout(() => setIsCelebrating(false), 1000);
 
         }
 
-        // bets['Thief'] = 3;
         if (bets['Thief'] == 3) {// gives a chance to steal coins
             // Update infomation
             setInfoText(`You won Thief`);
             setAnimText(!isAnimText);
 
-            setTarget('Coin');
-            setVisibleMap(true);
+            // setTarget('Coin');
+            // setVisibleMap(true);
+            openMapDailog('Coin');
         }
         if (bets['More spins'] == 3) {// gives more spin
             // Update infomation
@@ -424,7 +429,7 @@ const FruitMachine = () => {
         setVisibleMap(false);
         console.log('params from map dialog', params);
         if (target == "Golden ticket") {
-            if (params.golden_ticket_owned && (params.golden_ticket_building == params.selectedBuilding)) {
+            if (params.golden_ticket_owned) {//  && (params.golden_ticket_building == params.selectedBuilding)
                 const randomNumber = Math.floor(Math.random() * 4) + 1;// random building number
                 await updateUser(user?.email, {
                     golden_ticket_owned: true,
@@ -471,6 +476,92 @@ const FruitMachine = () => {
         const differenceInMilliseconds = hasFromPlus30Days - currentTimestamp;
         result = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
         return `${result} days`;
+    }
+    const openMapDailog = (target: string) => {
+        setTarget(target);
+        setVisibleMap(true);
+    }
+    const onSelectBox = async (params: any) => { // get card bought
+        console.log('selected box', params);
+
+        setPlayerData({
+            ...playerData,
+            coins: playerData.coins - params.boxCost,
+            cardInfo: {
+                ...playerData.cardInfo,
+                [params.key]: params.count
+            }
+        });
+        updateUser(user?.email, {
+            coins: playerData.coins - params.boxCost,
+            cardInfo: {
+                ...playerData.cardInfo,
+                [params.key]: params.count
+            }
+        })
+            .then(() => {
+                console.log('User updated successfully');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+    const onSelectCard = async (params: any) => {
+        console.log('used this card', params);
+        const updatedPlayerData = {
+            ...playerData,
+            cardInfo: {
+                ...playerData.cardInfo,
+                [params.key]: playerData.cardInfo[params.key] - 1
+            }
+        }
+        if(params.key == "steal_ticket") {
+            openMapDailog('Golden ticket');
+        }
+        if(params.key == "steal_coin") {
+            openMapDailog('Coin');
+        }
+        
+        if(params.key == "coin_200k") {
+            updatedPlayerData.coins = updatedPlayerData.coins + 200 * 100000
+        }
+        if(params.key == "coin_2x") {
+            updatedPlayerData.coins = updatedPlayerData.coins * 2
+        }
+        if(params.key == "extra_spins_10") {
+            updatedPlayerData.spins = updatedPlayerData.spins + 10
+        }
+        if(params.key == "extra_spins_20") {
+            updatedPlayerData.spins = updatedPlayerData.spins + 20
+        }
+        if(params.key == "extra_spins_30") {
+            updatedPlayerData.spins = updatedPlayerData.spins + 30
+        }
+        if(params.key == "extra_spins_40") {
+            updatedPlayerData.spins = updatedPlayerData.spins + 40
+        }
+        if(params.key == "shield") {
+            updatedPlayerData.shield = updatedPlayerData.shield + 1
+        }
+        if(params.key == "shield_2x") {
+            updatedPlayerData.shield = updatedPlayerData.shield + 2
+        }
+        if(params.key == "shield_3x") {
+            updatedPlayerData.shield = updatedPlayerData.shield + 3
+        }
+        if(params.key == "time_keeper5") {
+            console.log('you got time keeper5');
+            
+        }
+
+        setPlayerData(updatedPlayerData);
+        updateUser(user?.email, updatedPlayerData)
+            .then(() => {
+                console.log('User updated successfully');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     return (
@@ -542,13 +633,16 @@ const FruitMachine = () => {
                 <Text style={styles.valueText}>{`${playerData.spins}`}</Text>
             </ImageBackground>
 
-            <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} style={{ width: 300, height: 100}}/>
+            <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} style={{ width: 300, height: 100 }} />
 
             <View style={{ position: 'absolute', top: 30, right: -40 }}>
                 <GameButton background={ImageShop} title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} />
             </View>
-            <View style={{ position: 'absolute', top: 90, right: -40 }}>
+            <View style={{ position: 'absolute', top: 85, right: -40 }}>
                 <GameButton background={ImageBonus} title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} />
+            </View>
+            <View style={{ position: 'absolute', top: 85, right: 20 }}>
+                <GameButton background={ImageMyVillage} title={"Village"} onPress={() => setVisibleVillage(true)} disabled={spinning} />
             </View>
 
             {/* <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} /> */}
@@ -561,7 +655,15 @@ const FruitMachine = () => {
 
             <ShopDialog isOpen={isVisible} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
-            <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} />
+            {/* <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} /> */}
+            <MyVillageDialog
+                isOpen={isVisibleVillage}
+                machineData={playerData}
+                onSelectBox={onSelectBox}
+                onSelectCard={onSelectCard}
+                onOK={(params: any) => { }}
+                onCancel={() => setVisibleVillage(false)}
+            />
             <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
 
             {isCelebrating && <ConfettiCannon count={100} origin={{ x: -10, y: 0 }} />}
