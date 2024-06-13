@@ -5,7 +5,7 @@ import AnimatedCounter from './AnimatedCounter';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { ImageButton, GameButton } from '../buttons';
 import { ImageText, CoinText } from '../text';
-import { ShopDialog, InviteDialog, MyVillageDialog, MapDialog } from '../dialogs';
+import { ShopDialog, InviteDialog, MyVillageDialog, MapDialog, MyCardsDialog, SpinsOutDialog } from '../dialogs';
 import ImageMachine from '../../../static/assets/background-machine.png';
 import ImageSpin from '../../../static/assets/spin_button_small.png';
 import ImageGoldenTicket from '../../../static/assets/golden-ticket-small.png';
@@ -84,6 +84,7 @@ const FruitMachine = () => {
     const [isGolenTicket, setGoldenTicket] = useState(false);
     const [isVisibleMap, setVisibleMap] = useState(false);
     const [isVisibleVillage, setVisibleVillage] = useState(false);
+    const [isVisibleSpinsOut, setVisibleSpinsOut] = useState(false);
 
     const [target, setTarget] = useState('Golden ticket');
     const [isCelebrating, setIsCelebrating] = useState(false);
@@ -260,6 +261,9 @@ const FruitMachine = () => {
         if (bets['Hat'] == 3) {
             coinPlus += 75000;
         }
+        
+        const indicatorText = ((spinPlus > 0) ? `Spins: +${spinPlus}` : '') + ((coinPlus > 0) ? `Coins: +${coinPlus}` : '') ;
+        setInfoText(indicatorText);
 
         if (bets['Shield'] == 3) {// protect from attackers
             shieldPlus += 3;
@@ -277,7 +281,6 @@ const FruitMachine = () => {
             // setTarget('Golden ticket');
             // setVisibleMap(true);
             openMapDailog('Golden ticket');
-
 
             setIsCelebrating(true);
             setTimeout(() => setIsCelebrating(false), 1000);
@@ -337,7 +340,13 @@ const FruitMachine = () => {
             });
 
     }
+
     const spin = () => {
+        if(playerData.spins === 0) {
+            console.log('spins are out at the moment, pls buy to use')
+            setVisibleSpinsOut(true);
+            return;
+        }
         setSpinning(true);
 
         // Randomize the stopping point for each slot
@@ -515,43 +524,43 @@ const FruitMachine = () => {
                 [params.key]: playerData.cardInfo[params.key] - 1
             }
         }
-        if(params.key == "steal_ticket") {
+        if (params.key == "steal_ticket") {
             openMapDailog('Golden ticket');
         }
-        if(params.key == "steal_coin") {
+        if (params.key == "steal_coin") {
             openMapDailog('Coin');
         }
-        
-        if(params.key == "coin_200k") {
+
+        if (params.key == "coin_200k") {
             updatedPlayerData.coins = updatedPlayerData.coins + 200 * 100000
         }
-        if(params.key == "coin_2x") {
+        if (params.key == "coin_2x") {
             updatedPlayerData.coins = updatedPlayerData.coins * 2
         }
-        if(params.key == "extra_spins_10") {
+        if (params.key == "extra_spins_10") {
             updatedPlayerData.spins = updatedPlayerData.spins + 10
         }
-        if(params.key == "extra_spins_20") {
+        if (params.key == "extra_spins_20") {
             updatedPlayerData.spins = updatedPlayerData.spins + 20
         }
-        if(params.key == "extra_spins_30") {
+        if (params.key == "extra_spins_30") {
             updatedPlayerData.spins = updatedPlayerData.spins + 30
         }
-        if(params.key == "extra_spins_40") {
+        if (params.key == "extra_spins_40") {
             updatedPlayerData.spins = updatedPlayerData.spins + 40
         }
-        if(params.key == "shield") {
+        if (params.key == "shield") {
             updatedPlayerData.shield = updatedPlayerData.shield + 1
         }
-        if(params.key == "shield_2x") {
+        if (params.key == "shield_2x") {
             updatedPlayerData.shield = updatedPlayerData.shield + 2
         }
-        if(params.key == "shield_3x") {
+        if (params.key == "shield_3x") {
             updatedPlayerData.shield = updatedPlayerData.shield + 3
         }
-        if(params.key == "time_keeper5") {
+        if (params.key == "time_keeper5") {
             console.log('you got time keeper5');
-            
+
         }
 
         setPlayerData(updatedPlayerData);
@@ -654,9 +663,19 @@ const FruitMachine = () => {
 
 
             <ShopDialog isOpen={isVisible} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
+            <SpinsOutDialog isOpen={isVisibleSpinsOut} onOK={() => setVisible(true)} onCancel={() => setVisibleSpinsOut(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
             {/* <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} /> */}
-            <MyVillageDialog
+            {/* <MyVillageDialog
+                isOpen={isVisibleVillage}
+                machineData={playerData}
+                onSelectBox={onSelectBox}
+                onSelectCard={onSelectCard}
+                onOK={(params: any) => { }}
+                onCancel={() => setVisibleVillage(false)}
+            /> */}
+
+            <MyCardsDialog
                 isOpen={isVisibleVillage}
                 machineData={playerData}
                 onSelectBox={onSelectBox}
@@ -664,6 +683,7 @@ const FruitMachine = () => {
                 onOK={(params: any) => { }}
                 onCancel={() => setVisibleVillage(false)}
             />
+
             <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
 
             {isCelebrating && <ConfettiCannon count={100} origin={{ x: -10, y: 0 }} />}

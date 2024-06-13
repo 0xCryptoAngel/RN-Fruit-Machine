@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { StyleSheet, Text, View, Modal, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground } from 'react-native';
 
 import staticImage from '../../../static/assets/golden-ticket-small.png';
-import ImageCoin600k from '../../../static/assets/600k.jpg'
-import ImageCoin1m from '../../../static/assets/1m.jpg'
-import ImageCoin4m from '../../../static/assets/4m.jpg'
+import ImageCoin600k from '../../../static/assets/card_200k_coins.png' //600k.jpg
+import ImageCoin1m from '../../../static/assets/card_200k_coins.png' //1m.jpg
+import ImageCoin4m from '../../../static/assets/card_200k_coins.png' //4m.jpg
 
-import ImageSpin25 from '../../../static/assets/spin25.png'
-import ImageSpin75 from '../../../static/assets/spin75.png'
-import ImageSpin200 from '../../../static/assets/spin200.png'
+import ImageSpin25 from '../../../static/assets/card_xtra_spins_20.png' //25
+import ImageSpin75 from '../../../static/assets/card_xtra_spins_40.png' //75
+import ImageSpin200 from '../../../static/assets/card_xtra_spins_100.png' //200
 
 import ImageShop from '../../../static/assets/shop_bachground.png'
 
@@ -194,10 +194,11 @@ const styles = StyleSheet.create({
 
     },
     spinImage: {
-        width: 100,
+        width: 90,
         height: 150,
         justifyContent: 'flex-end',
         alignItems: 'center',
+        resizeMode: 'contain'
     },
     buyCoins: {
         flexDirection: 'row',
@@ -208,16 +209,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     coinImage: {
-        width: 100,
+        width: 90,
         height: 150,
         justifyContent: 'flex-end',
         alignItems: 'center',
+        resizeMode: 'contain',
     },
     price: {
         color: '#fff',
         fontSize: 18,
         fontWeight: '600',
-        paddingBottom: 12,
+        paddingBottom: 2,
     },
     items: {
         paddingHorizontal: 30,
