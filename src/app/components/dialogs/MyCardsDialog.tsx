@@ -312,7 +312,9 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                                             <TouchableOpacity key={card.name} style={styles.card} onPress={() => handleSelectCard(card)}>
                                                 <ImageBackground source={card.image as ImageSourcePropType} style={styles.cardImage} resizeMode='contain' >
                                                     {/* <Text style={styles.cardCountText}>{card.count}</Text> */}
-                                                    <AnimatedCounter targetValue={card.count} duration={500} />
+                                                    <View style={{ paddingVertical: 10 }}>
+                                                        <AnimatedCounter targetValue={card.count} duration={500} />
+                                                    </View>
                                                 </ImageBackground>
                                             </TouchableOpacity>
                                         ))
@@ -485,7 +487,7 @@ const styles = StyleSheet.create({
     },
     cardImage: {
         width: 150,
-        height: 180,
+        height: 250,
         alignItems: 'center',
         justifyContent: 'flex-end'
     },
@@ -532,7 +534,7 @@ const styles = StyleSheet.create({
         // resizeMode: 'cover',
         width: '100%',
         // height: '120%',
-        height: 300,
+        height: 330,
         // paddingTop: '25%',
     },
 });

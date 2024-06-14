@@ -644,13 +644,13 @@ const FruitMachine = () => {
 
             <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} style={{ width: 300, height: 100 }} />
 
-            <View style={{ position: 'absolute', top: 30, right: -40 }}>
+            <View style={{ position: 'absolute', top: 30, right: 10 }}>
                 <GameButton background={ImageShop} title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} />
             </View>
-            <View style={{ position: 'absolute', top: 85, right: -40 }}>
+            <View style={{ position: 'absolute', top: 85, right: 10 }}>
                 <GameButton background={ImageBonus} title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} />
             </View>
-            <View style={{ position: 'absolute', top: 85, right: 20 }}>
+            <View style={{ position: 'absolute', top: 85, right: 70 }}>
                 <GameButton background={ImageMyVillage} title={"Village"} onPress={() => setVisibleVillage(true)} disabled={spinning} />
             </View>
 

@@ -7,7 +7,7 @@ import { ImageButton } from '../buttons';
 const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
 
     const [formData, setFormData]: any = useState({
-        email: 'your@email.com',
+        email: 'dearfriend@gmail.com',
         message: "Hi, \nI would like to invite you on Golden Ticket App.\n Enjoy now!",
     });
 
