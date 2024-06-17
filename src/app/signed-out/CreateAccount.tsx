@@ -57,6 +57,8 @@ function CreateAccount(): JSX.Element {
         "golden_ticket_building": 'not yet',
         "hasFrom": Date.now(),
         'shield': 0,
+        'level': 1,
+        'block': 5,
       });
       setLoading(false);
 

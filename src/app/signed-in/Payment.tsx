@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState, useContext } from 'react';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { CardField, useStripe, useConfirmPayment } from '@stripe/stripe-react-native';
 import { View, StyleSheet, Button, Text, TouchableOpacity, ImageSourcePropType, Image } from 'react-native';
+import SelectDropdown from 'react-native-select-dropdown'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useNavigation } from '@react-navigation/native';
 import appConfig from '../util/config';
@@ -11,11 +13,22 @@ import ImageLogoText from '../../static/assets/logo-text.png';
 
 function Payment({ route }: any) {
 
+    const [paymentData, setPaymentData]: any = useState({
+        item: 'Coin',
+        amount: 0,
+        cost: 0
+    })
     const navigation: any = useNavigation();
     const user = useContext(UserContext);
 
     const params = route.params;
     console.log(params);
+
+    const emojisWithIcons = [
+        { title: '600k / £1:50', icon: 'emoticon-happy-outline', value: 600000, cost: 1.5 },
+        { title: '1M / £2:50', icon: 'emoticon-cool-outline', value: 1000000, cost: 2.5 },
+        { title: '4M / £8:50', icon: 'emoticon-lol-outline', value: 4000000, cost:8.5 },
+    ];
 
     const { confirmPayment } = useStripe();
 
@@ -65,8 +78,7 @@ function Payment({ route }: any) {
                         // Handle successful payment
                         // save result
                         const newData = {
-                            coins: params.currentCoins + (params.item == 'coin' ? params.amount : 0),
-                            spins: params.currentSpins + (params.item == 'spin' ? params.amount : 0),
+                            coins: params.currentCoins + paymentData.value,
                         }
                         console.log(newData);
 
@@ -77,8 +89,8 @@ function Payment({ route }: any) {
 
                                 navigation.navigate('Game', {
                                     'payment': 'success',
-                                    'amount': params.amount,
-                                    'cost': params.cost * 100,
+                                    'amount': paymentData.value,
+                                    'cost': paymentData.cost * 100,
                                 });
                             })
                             .catch((error) => {
@@ -96,8 +108,8 @@ function Payment({ route }: any) {
     const handleBack = async () => {
         navigation.navigate('Game', {
             'payment': 'cancel',
-            'amount': params.value,
-            'cost': params.cost * 100,
+            'amount': paymentData.value,
+            'cost': paymentData.cost * 100,
         });
     }
     return (
@@ -111,11 +123,44 @@ function Payment({ route }: any) {
                 <View style={{ marginTop: 30 }}>
                     <Image source={ImageLogoText as ImageSourcePropType} style={styles.logoImage} />
                 </View>
-                <Text style={styles.title}>Payment Details</Text>
+                <Text style={styles.title}>Do you need to buy coins?</Text>
                 <View style={styles.paymentDetail}>
-                    <Text style={styles.infoText}>Item: {params.item} </Text>
-                    <Text style={styles.infoText}>Amount: {params.amount} </Text>
-                    <Text style={styles.infoText}>Cost: {params.cost} £</Text>
+                    <SelectDropdown
+                        data={emojisWithIcons}
+                        onSelect={(selectedItem, index) => {
+                            console.log(selectedItem, index);
+                            setPaymentData({
+                                amount: selectedItem.value,
+                                cost: selectedItem.cost
+                            })
+                        }}
+                        renderButton={(selectedItem, isOpened) => {
+                            return (
+                                <View style={styles.dropdownButtonStyle}>
+                                    {selectedItem && (
+                                        <Icon name={selectedItem.icon} style={styles.dropdownButtonIconStyle} />
+                                    )}
+                                    <Text style={styles.dropdownButtonTxtStyle}>
+                                        {(selectedItem && selectedItem.title) || 'Coin Amount'}
+                                    </Text>
+                                    <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} style={styles.dropdownButtonArrowStyle} />
+                                </View>
+                            );
+                        }}
+                        renderItem={(item, index, isSelected) => {
+                            return (
+                                <View style={{ ...styles.dropdownItemStyle, ...(isSelected && { backgroundColor: '#D2D9DF' }) }}>
+                                    <Icon name={item.icon} style={styles.dropdownItemIconStyle} />
+                                    <Text style={styles.dropdownItemTxtStyle}>{item.title}</Text>
+                                </View>
+                            );
+                        }}
+                        showsVerticalScrollIndicator={false}
+                        dropdownStyle={styles.dropdownMenuStyle}
+                    />
+                    {/* <Text style={styles.infoText}>Item: {paymentData.item} </Text> */}
+                    {/* <Text style={styles.infoText}>Amount: {paymentData.amount} </Text> */}
+                    {/* <Text style={styles.infoText}>Cost: {paymentData.cost} £</Text> */}
                 </View>
                 <CardField
                     postalCodeEnabled={true}
@@ -203,6 +248,51 @@ const styles = StyleSheet.create({
     logoImage: {
         width: 300,
         height: 70,
+    },
+    dropdownButtonStyle: {
+        width: 200,
+        height: 50,
+        backgroundColor: '#E9ECEF',
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+    },
+    dropdownButtonTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: '#151E26',
+    },
+    dropdownButtonArrowStyle: {
+        fontSize: 28,
+    },
+    dropdownButtonIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
+    },
+    dropdownMenuStyle: {
+        backgroundColor: '#E9ECEF',
+        borderRadius: 8,
+    },
+    dropdownItemStyle: {
+        width: '100%',
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 8,
+    },
+    dropdownItemTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: '#151E26',
+    },
+    dropdownItemIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
     },
 })
 

@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Modal, ScrollView, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Modal, ScrollView, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground, FlatList } from 'react-native';
 
 import ImageBuilding1 from '../../../static/assets/building-1.jpg';
 import ImageBuilding2 from '../../../static/assets/building-2.jpg';
 import ImageBuilding3 from '../../../static/assets/building-3.jpg';
 import ImageBuilding4 from '../../../static/assets/building-4.jpg';
+import BackArrowImg from '../../../static/assets/back_arrow_button.png';
+import BackgroundAttack from '../../../static/assets/background-attack.png';
 
 import { ImageButton } from '../buttons';
 import { Divider } from '../dividers';
 import { getUsers } from '../../services/gameService';
+import CharacterInfo from '../custom/CharacterInfo';
 
 const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
 
@@ -71,7 +74,7 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
             selectedBuilding: building.value
         })
     }
-    const handleAttack =async (village:any) => {
+    const handleAttack = async (village: any) => {
         console.log('village', village);
         setFormData({
             ...formData,
@@ -117,57 +120,33 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
         fetchData();
 
     }, [isOpen]);
+    
+    const renderItem = ({ item }: any) => (
+        <View style={styles.item}>
+            <CharacterInfo name={item.name} level={item.level} defencePower={item.shield} onAttack={() => handleAttack(item)}/>
+        </View>
+    );
+
     return (<>
         <Modal visible={isOpen} animationType="fade" transparent={true} onRequestClose={() => { /*onCancel()*/ }}>
-            <TouchableOpacity style={styles.modalContainer} onPressOut={() => { }} onPress={() => { }}>
-                <View style={styles.modalView}>
-                    <View style={styles.alert}>
-                        <Text style={styles.alertMessage}>{`Attack the villages to get ${target}.`}</Text>
-                        <ScrollView style={styles.villages}>
-                            {villages?.map((village: any) => (
-                                <View style={styles.buildings} key={village.userId}>
-                                    <Text style={styles.vallageName}>{village.name}</Text>
-                                    {/* {
-                                        buildings.map((item: any, index: number) => (
-                                            <TouchableOpacity key={index} style={styles.coinItem} onPress={() => handleSelect(village, item)}>
-                                                <ImageBackground source={item.image} style={styles.spinImage}>
-                                                </ImageBackground>
-                                                <Text style={{
-                                                    marginVertical: 5,
-                                                    textAlign: 'center',
-                                                    fontSize: 14,
-                                                    fontWeight: 'bold',
-                                                    color: (item.value == formData.selectedBuilding) && (formData.selectedVillage == village.userId) ? '#f00' : "#ccc",
-                                                }}> {item.title}</Text>
-                                            </TouchableOpacity>
-                                        ))
-                                    } */}
-                                    <TouchableOpacity style={styles.actionButton} onPress={() => handleAttack(village)}>
-                                        {/* <ImageBackground source={item.image} style={styles.spinImage} /> */}
-                                        <Text style={{
-                                            marginVertical: 5,
-                                            textAlign: 'center',
-                                            fontSize: 14,
-                                            fontWeight: 'bold',
-                                            color: '#f00',
-                                        }}> Attack Now</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
-                        </ScrollView>
-
-                        <Divider />
-                        <View style={styles.alertButtonGroup}>
-                            {/* <View style={styles.alertButton}>
-                                <ImageButton title="Confirm" onPress={() => onOK(formData)} />
-                            </View> */}
-                            <View style={styles.alertButton}>
-                                <ImageButton title="BACK" onPress={() => onCancel()} />
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.modalContainer} onPressOut={() => { }} onPress={() => { }}> */}
+            <View style={styles.modalView}>
+                <ImageBackground style={styles.contentContainer} source={BackgroundAttack as ImageSourcePropType} resizeMode='cover'>
+                    <Text style={styles.alertMessage}>{`Attack on ${target}`}</Text>
+                    <FlatList
+                        data={villages}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.userId}
+                        numColumns={2}
+                        columnWrapperStyle={styles.row}
+                        contentContainerStyle={styles.list}
+                    />
+                    <TouchableOpacity style={styles.backArrowButton} onPress={() => onCancel()}>
+                        <ImageBackground source={BackArrowImg as ImageSourcePropType} style={styles.backArrowButton} resizeMode='cover' />
+                    </TouchableOpacity>
+                </ImageBackground>
+            </View>
+            {/* </TouchableOpacity> */}
         </Modal>
     </>)
 }
@@ -195,15 +174,17 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         justifyContent: 'center'
     },
-    alert: {
-        flex: 1,
+    contentContainer: {
+        // flex: 1,
         width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
         // maxWidth: 300,
-        marginTop: 100,
-        paddingHorizontal: 20,
+        marginTop: 10,
+        // paddingHorizontal: 20,
         elevation: 24,
         borderRadius: 2,
-        backgroundColor: '#fff'
+        // backgroundColor: '#fda46d'
     },
     alertTitle: {
         marginHorizontal: 24,
@@ -214,15 +195,15 @@ const styles = StyleSheet.create({
     alertMessage: {
         marginTop: 24,
         marginRight: 24,
-        marginBottom: 24,
-        fontSize: 20,
+        // marginBottom: 24,
+        fontSize: 24,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
-        color: "#000",
+        color: "#f00",
         textAlign: 'center',
-        paddingBottom: 10,
-        borderBottomColor: '#888',
-        borderBottomWidth: 1,
+        // paddingBottom: 10,
+        // borderBottomColor: '#ccc',
+        // borderBottomWidth: 1,
     },
     alertButtonGroup: {
         marginTop: 0,
@@ -286,6 +267,23 @@ const styles = StyleSheet.create({
     actionButton: {
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    backArrowButton: {
+        position: 'absolute',
+        right: 5,
+        top: 5,
+        width: 50,
+        height: 50,
+    },
+    row: {
+        justifyContent: 'space-around',
+    },
+    item: {
+        flex: 1,
+        margin: 5,
+    },
+    list: {
+        paddingVertical: 10,
     },
 });
 

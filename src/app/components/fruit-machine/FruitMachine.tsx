@@ -24,6 +24,7 @@ import { getUser, updateUser } from '../../services/gameService';
 import { UserContext } from '../../App';
 import { sendEmail } from '../../services/emailService';
 import appConfig from '../../util/config';
+import ResultDialog from '../dialogs/ResultDialog';
 
 const fruitList = [
     {
@@ -85,15 +86,13 @@ const FruitMachine = () => {
     const [isVisibleMap, setVisibleMap] = useState(false);
     const [isVisibleVillage, setVisibleVillage] = useState(false);
     const [isVisibleSpinsOut, setVisibleSpinsOut] = useState(false);
+    const [isVisibleResult, setVisibleResult] = useState(false);
 
     const [target, setTarget] = useState('Golden ticket');
     const [isCelebrating, setIsCelebrating] = useState(false);
     const [isAnimText, setAnimText] = useState(false);
     const [infoText, setInfoText] = useState("Welcome to GolenTicket!")
     const [slotData, setSlotData] = useState([ // slot has 7 fruits
-        // [0, 1, 2, 3, 4, 5, 6, 7],// number in fruits list
-        // [0, 1, 2, 3, 4, 5, 6, 7],
-        // [0, 1, 2, 3, 4, 5, 6, 7],
         [6, 3, 2, 7, 4, 0, 1, 5],
         [7, 1, 5, 3, 0, 6, 2, 4],
         [2, 4, 6, 5, 3, 1, 7, 0]
@@ -109,8 +108,18 @@ const FruitMachine = () => {
         golden_ticket_owned: false,
         golden_ticket_building: 'not yet',
         hasFrom: Date.now(),
-        cardInfo: {}
+        cardInfo: {},
+        level: 1,
+        block: 0,
     })
+
+    const [resultData, setResultData] = useState([
+        {
+            name: 'Coin',
+            description: 'You can use coin to buy cards',
+            amount: 34500,
+        }
+    ])
 
     const animations = useRef([
         new Animated.Value(initialY[0]),
@@ -123,21 +132,6 @@ const FruitMachine = () => {
 
     // Function to shuffle an array
     const shuffleArray = (array: any) => {
-        let currentIndex = array.length, temporaryValue, randomIndex;
-
-        // While there remain elements to shuffle...
-
-        // while (0 !== currentIndex) {
-        //     // Pick a remaining element...
-        //     // randomIndex = Math.floor(Math.random() * currentIndex);
-        //     randomIndex = Math.ceil(Math.random() * (fruitCount - 1));
-        //     currentIndex -= 1;
-
-        //     // And swap it with the current element.
-        //     temporaryValue = array[currentIndex];
-        //     array[currentIndex] = array[randomIndex];
-        //     array[randomIndex] = temporaryValue;
-        // }
 
         return array;
     };
@@ -261,8 +255,8 @@ const FruitMachine = () => {
         if (bets['Hat'] == 3) {
             coinPlus += 75000;
         }
-        
-        const indicatorText = ((spinPlus > 0) ? `Spins: +${spinPlus}` : '') + ((coinPlus > 0) ? `Coins: +${coinPlus}` : '') ;
+
+        const indicatorText = ((spinPlus > 0) ? `Spins: +${spinPlus}` : '') + ((coinPlus > 0) ? `Coins: +${coinPlus}` : '');
         setInfoText(indicatorText);
 
         if (bets['Shield'] == 3) {// protect from attackers
@@ -342,7 +336,7 @@ const FruitMachine = () => {
     }
 
     const spin = () => {
-        if(playerData.spins === 0) {
+        if (playerData.spins === 0) {
             console.log('spins are out at the moment, pls buy to use')
             setVisibleSpinsOut(true);
             return;
@@ -385,16 +379,26 @@ const FruitMachine = () => {
     };
 
     const onBuyCoinSpin = async (params: any) => {
-        console.log(params);
-        setVisible(false);
+        console.log('buy spins', params);
 
-        navigation.navigate('Payment', {
-            'item': params.type,
-            'amount': params.value,
-            'cost': params.cost,
-            'currentSpins': playerData.spins,
-            'currentCoins': playerData.coins,
+        setPlayerData({
+            ...playerData,
+            coins: playerData.coins - params.cost,
+            spins: playerData.spins + params.value,
         });
+
+        updateUser(user?.email, {
+            coins: playerData.coins - params.cost,
+            spins: playerData.spins + params.value,
+        })
+            .then(() => {
+                console.log('User updated successfully');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+        setVisible(false);
     }
     const onInvite = async (params: any) => {
         console.log('invite dialog', params);
@@ -434,7 +438,7 @@ const FruitMachine = () => {
                 console.error('Error:', error);
             });
     }
-    const onMap = async (params: any) => {
+    const onMap = async (params: any) => { // Attack on coin and block
         setVisibleMap(false);
         console.log('params from map dialog', params);
         if (target == "Golden ticket") {
@@ -462,19 +466,59 @@ const FruitMachine = () => {
         }
         if (target == "Coin") {
             const currentCoins = params.coins;// random building number
+            const stealAmount = Math.floor(currentCoins * 0.1);
             await updateUser(user?.email, {
-                coins: playerData.coins + currentCoins * 0.25,
+                coins: playerData.coins + stealAmount,
             });
 
             await updateUser(params.email, {
-                coins: currentCoins * 0.75,
+                coins: currentCoins - stealAmount,
             });
 
             setPlayerData({
                 ...playerData,
-                coins: playerData.coins + currentCoins * 0.25,
-            })
+                coins: playerData.coins + stealAmount,
+            });
+            setResultData([
+                {
+                    name: 'Coin',
+                    description: 'You stole the coins',
+                    amount: stealAmount,
+                }
+            ])
         }
+        if (target == "Block") {
+
+            const stealAmount = params.block ? Math.floor(params.block * 0.10) : 0;
+            let updatedBlock = playerData.block + stealAmount;
+            let updatedLevel = playerData.level;
+            if (updatedBlock > playerData.level * 10) {
+                updatedBlock = 0;
+                updatedLevel = updatedLevel + 1; // level up
+            }
+            await updateUser(user?.email, {
+                block: updatedBlock,
+                level: updatedBlock
+            });
+
+            await updateUser(params.email, {
+                block: params.block - stealAmount,
+            });
+
+            setPlayerData({
+                ...playerData,
+                block: updatedBlock,
+                level: updatedLevel,
+            });
+            setResultData([
+                {
+                    name: 'Block',
+                    description: 'You stole the blocks',
+                    amount: stealAmount,
+                }
+            ])
+        }
+        setVisibleResult(true);
     }
     const getOwnedDays = (hasFrom: number) => {
         let result = 0;
@@ -493,14 +537,6 @@ const FruitMachine = () => {
     const onSelectBox = async (params: any) => { // get card bought
         console.log('selected box', params);
 
-        setPlayerData({
-            ...playerData,
-            coins: playerData.coins - params.boxCost,
-            cardInfo: {
-                ...playerData.cardInfo,
-                [params.key]: params.count
-            }
-        });
         updateUser(user?.email, {
             coins: playerData.coins - params.boxCost,
             cardInfo: {
@@ -510,6 +546,15 @@ const FruitMachine = () => {
         })
             .then(() => {
                 console.log('User updated successfully');
+
+                setPlayerData({
+                    ...playerData,
+                    coins: playerData.coins - params.boxCost,
+                    cardInfo: {
+                        ...playerData.cardInfo,
+                        [params.key]: params.count
+                    }
+                });
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -529,6 +574,9 @@ const FruitMachine = () => {
         }
         if (params.key == "steal_coin") {
             openMapDailog('Coin');
+        }
+        if (params.key == "steal_block") {
+            openMapDailog('Block');
         }
 
         if (params.key == "coin_200k") {
@@ -560,7 +608,15 @@ const FruitMachine = () => {
         }
         if (params.key == "time_keeper5") {
             console.log('you got time keeper5');
+        }
+        if (params.key == "block") {
+            updatedPlayerData.block = (updatedPlayerData.block || 0) + 1;
 
+            if (updatedPlayerData.block > updatedPlayerData.level * 10) { // Level UP
+                updatedPlayerData.level = updatedPlayerData.level + 1;
+                updatedPlayerData.block = 0;
+
+            }
         }
 
         setPlayerData(updatedPlayerData);
@@ -581,27 +637,36 @@ const FruitMachine = () => {
                         <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
                     </ImageBackground>
                     <View style={styles.inventoryImage}>
-                        {
+                        <View style={{ width: 60, height: 60, padding: 5, borderRadius: 50, backgroundColor: '#f1f1f1',}}>
+                            < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' >
+                                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#f00' }}>{playerData.level} </Text>
+                                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#03dddf' }}>Level</Text>
+                            </ImageBackground>
+                        </View>
+                        {/* {
                             playerData.golden_ticket_owned ? (
                                 < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
                             ) : (
                                 < ImageBackground source={ImageGoldenTicketBlank as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
                             )
-                        }
+                        } */}
                     </View>
                     <View style={styles.inventoryImage}>
-                        {
+                        < ImageBackground source={ImageShield as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' >
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#00f' }}>{playerData.shield} </Text>
+                        </ImageBackground>
+                        {/* {
                             playerData.shield > 0 ? (
                                 <Image source={ImageShield as ImageSourcePropType} style={styles.smallImage} />
                             ) : (
                                 <Image source={ImageShieldBlank as ImageSourcePropType} style={styles.smallImage} />
                             )
-                        }
+                        } */}
                     </View>
                 </View>
                 <View style={styles.inventory}>
-                    <ImageBackground style={styles.timerBar} source={ImageTimerBack as ImageSourcePropType} resizeMode="contain">
-                        <Text style={styles.valueText}>{playerData.golden_ticket_owned ? getOwnedDays(playerData.hasFrom) : ''}</Text>
+                    <ImageBackground style={styles.timerBar} source={ImageTimerBack as ImageSourcePropType} resizeMode="cover">
+                        <Text style={styles.levelText}>{`${playerData.block || 0}/${(playerData.level || 1) * 10}`}</Text>
                     </ImageBackground>
                 </View>
             </View>
@@ -654,26 +719,9 @@ const FruitMachine = () => {
                 <GameButton background={ImageMyVillage} title={"Village"} onPress={() => setVisibleVillage(true)} disabled={spinning} />
             </View>
 
-            {/* <ImageButton title={"SPIN"} onPress={spin} disabled={spinning} /> */}
-            {/* <View style={{ position: 'absolute', top: 0, right: 0 }}> */}
-            {/* <ImageButton title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} style={{ marginTop: 10, }} /> */}
-            {/* </View> */}
-            {/* <ImageButton title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} style={{ marginTop: 10, }} /> */}
-            {/* <ImageButton title={"BACK"} onPress={() => navigation.navigate('Home')} disabled={spinning} style={{ marginTop: 10, }} /> */}
-
-
-            <ShopDialog isOpen={isVisible} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
+            <ShopDialog isOpen={isVisible} data={playerData} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
             <SpinsOutDialog isOpen={isVisibleSpinsOut} onOK={() => setVisible(true)} onCancel={() => setVisibleSpinsOut(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
-            {/* <MyVillageDialog isOpen={isGolenTicket} onOK={(params: any) => onGoldenTicket(params)} onCancel={() => setGoldenTicket(false)} /> */}
-            {/* <MyVillageDialog
-                isOpen={isVisibleVillage}
-                machineData={playerData}
-                onSelectBox={onSelectBox}
-                onSelectCard={onSelectCard}
-                onOK={(params: any) => { }}
-                onCancel={() => setVisibleVillage(false)}
-            /> */}
 
             <MyCardsDialog
                 isOpen={isVisibleVillage}
@@ -685,7 +733,7 @@ const FruitMachine = () => {
             />
 
             <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
-
+            <ResultDialog isOpen={isVisibleResult} data={resultData} onCancel={() => setVisibleResult(false)} />
             {isCelebrating && <ConfettiCannon count={100} origin={{ x: -10, y: 0 }} />}
         </View>
     );
@@ -722,16 +770,11 @@ const styles = StyleSheet.create({
         height: 80,
         justifyContent: 'center',
         alignItems: 'center',
-        // borderColor: '#fed49a',
-        // borderWidth: 1,
     },
     fruitImage: {
         width: 64,
         height: 64,
         marginVertical: 0,
-        // borderColor: '#fed49a',
-        // borderWidth: 1,
-        // resizeMode: 'contain', 
     },
     counterContainer: {
         flexDirection: 'row',
@@ -764,10 +807,6 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         paddingVertical: 5,
         paddingHorizontal: 10,
-        // backgroundColor: '#410577',
-        // borderRadius: 5,
-        // borderWidth: 2,
-        // borderColor: '#fff',
         marginTop: 30,
         marginBottom: 25,
     },
@@ -789,6 +828,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         fontFamily: 'Roboto'
     },
+    levelText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#f80',
+        paddingHorizontal: 5,
+        fontFamily: 'Roboto'
+    },
     valueText: {
         fontSize: 20,
         fontWeight: '700',
@@ -797,8 +843,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto'
     },
     inventory: {
-        // flex: 1,
-        // width: "50%",
         height: 40,
         flexDirection: 'row',
         justifyContent: 'flex-start',
@@ -809,20 +853,15 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         marginVertical: 0,
-        // borderColor: '#fed49a',
-        // borderWidth: 1,
         marginRight: 5,
-        // resizeMode: 'contain',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     infoPanel: {
         position: 'absolute',
         top: 160,
-        // right: -40,
         width: '100%',
         marginBottom: 20,
-        // backgroundColor: '#2C3E50',
-        // borderRadius: 5,
-        // borderWidth: 2,
         borderColor: '#fff',
     },
     infoText: {
@@ -830,14 +869,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 10,
-        color: '#410577', // '#FFD700',
+        color: '#410577',
     },
     inventoryImage: {
         width: 50,
         height: 50,
-        // padding: 5,
-        // borderWidth: 1,
-        // borderColor: '#CCC',
+        marginRight: 10,
     },
     coinBar: {
         width: 200,
@@ -847,8 +884,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     timerBar: {
-        width: 170,
-        height: 60,
+        width: 200,
+        // width: '100%', 
+        height: 40,
         paddingHorizontal: 0,
         alignItems: 'center',
         justifyContent: 'center',

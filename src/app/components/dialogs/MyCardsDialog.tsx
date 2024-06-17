@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Modal, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground, ScrollView, Dimensions } from 'react-native';
 
 import AnimatedCounter from '../animation/AnimatedCounter';
-import ImageBuildingEnchanted from '../../../static/assets/casltes_1.png';
-import ImageBuildingProtection from '../../../static/assets/casltes_2.png';
-import ImageBuildingResource from '../../../static/assets/casltes_3.png';
-import ImageBuildingAttack from '../../../static/assets/casltes_4.png';
+import ImageBuildingEnchanted from '../../../static/assets/casltes_magic.png';
+import ImageBuildingProtection from '../../../static/assets/casltes_defence.png';
+import ImageBuildingResource from '../../../static/assets/casltes_resource.png';
+import ImageBuildingAttack from '../../../static/assets/casltes_attack.png';
 
 import ImageBoxEnchanted from '../../../static/assets/box1.jpg';
 import ImageBoxProtection from '../../../static/assets/box2.jpg';
@@ -26,6 +26,7 @@ import ImageCardStealXtraSpin20 from '../../../static/assets/card_xtra_spins_20.
 import ImageCardStealXtraSpin30 from '../../../static/assets/card_xtra_spins_30.png';
 import ImageCardStealXtraSpin40 from '../../../static/assets/card_xtra_spins_40.png';
 import ImageCardStealXtraSpin100 from '../../../static/assets/card_xtra_spins_100.png';
+import ImageCardBlock from '../../../static/assets/card_timekeeper5.png';
 import BackArrowImg from '../../../static/assets/back_arrow_button.png';
 
 import ImageCardLibrary from '../../../static/assets/castle_back_ground.png';
@@ -44,10 +45,11 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             title: 'Enchanted',
             value: 'building1',
             image: ImageBuildingEnchanted,
-            boxCost: 3000,
+            boxCost: (machineData.level || 1) * 1000, // 3000
             boxImage: ImageBoxEnchanted,
             cards: [
-                'time_keeper5'
+                // 'time_keeper5',
+                'block', // towers has blocks and it effect the level of user
             ]
         },
         {
@@ -88,7 +90,8 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             boxImage: ImageBoxAttack,
             cards: [
                 'steal_coin',
-                'steal_ticket',
+                'steal_block',
+                // 'steal_ticket',
             ]
         },
 
@@ -104,6 +107,12 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             key: 'steal_coin',
             name: 'Steal Coin',
             image: ImageCardStealCoin,
+            count: 0,
+        },
+        {
+            key: 'steal_block',
+            name: 'Steal Block',
+            image: ImageCardStealTicket,
             count: 0,
         },
         // {
@@ -178,6 +187,12 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
         //     image: ImageCardStealXtraSpin100,
         // count: 0,
         // },
+        {
+            key: 'block',
+            name: 'Blocks for Level',
+            image: ImageCardBlock,
+            count: 0,
+        },
     ])
     const [selectedCards, setSelectedCards]: any = useState([]);
     const [formData, setFormData]: any = useState({
@@ -198,13 +213,13 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
         });
         setSelectedCards(filteredCards);
     }
-    const handleSelectBox = async (params: any) => {
+    const handleSelectBox = async (params: any) => { // Buy card
         console.log('selected box -->', params);
         if (machineData.coins < params.boxCost) {
             console.log('nagative balcance');
-
             return;
         }
+
         const cardLength = params.cards?.length;
         if (cardLength == 0) { return; }
         const index = Math.floor(Math.random() * cardLength);
@@ -216,7 +231,7 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             }
         })
         setCards(updatedCards);
-        // setSelectedCards(updatedCards);
+        setSelectedCards([...selectedCards]);
 
         // update select item when click buy button
 
@@ -226,9 +241,11 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             boxCost: params.boxCost,
             ...selectedCard
         });
+        
+        handleSelectBuilding(params);
 
     }
-    const handleSelectCard = async (params: any) => {
+    const handleSelectCard = async (params: any) => { // Buy card
         console.log('selected card', params);
         if (params.count == 0) {
             console.log('card count is 0');
@@ -256,7 +273,17 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                 count: machineData.cardInfo ? machineData.cardInfo[card.key] || 0 : 0,
             }
         });
-        setCards(updateCards)
+        setCards(updateCards);
+
+        if (formData.selectedBuilding?.cards) {
+            const filteredCards = formData.selectedBuilding.cards.map((item: any) => {
+                const card = updateCards.find((it: any) => it.key == item);
+                if (card) { return card }
+            });
+            setSelectedCards(filteredCards);
+        }
+
+
     }, [machineData])
 
     return (<>
@@ -265,12 +292,9 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                 <View style={styles.alert}>
                     <ImageBackground source={ImageCardLibrary as ImageSourcePropType} style={styles.imageBackground} resizeMode='cover'>
                         <TouchableOpacity style={styles.backArrowButton} onPress={() => onCancel()}>
-                            <ImageBackground source={BackArrowImg as ImageSourcePropType} style={styles.backArrowButton} resizeMode='cover' >
-                            </ImageBackground>
+                            <ImageBackground source={BackArrowImg as ImageSourcePropType} style={styles.backArrowButton} resizeMode='cover' />
                         </TouchableOpacity>
                         <ImageBackground source={ImageCastleBackground as ImageSourcePropType} style={styles.imageCastleBackground} resizeMode='cover'>
-                            {/* <Image style={styles.alertIcon} source={staticImage as ImageSourcePropType} /> */}
-                            {/* <Text style={styles.alertTitle}>Shop</Text> */}
                             <Text style={styles.alertMessage}>{`${machineData.coins} coins now`}</Text>
                             <View style={styles.buildings}>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} >
@@ -282,28 +306,13 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                                                     <Text style={{ marginVertical: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: item.value == formData.selectedBuilding.value ? '#f80' : "#333" }}> {`${item.title} : ${item?.boxCost} coins`}</Text>
                                                 </TouchableOpacity>
                                                 <BuyButton onPress={() => handleSelectBox(item)} />
-                                                {/* <TouchableOpacity onPress={() => handleSelectBox(item)}>
-                                                    <Text style={{ marginVertical: 0, textAlign: 'center', fontSize: 20, fontWeight: 'bold', color: '#00f' }}>Buy Now</Text>
-                                                </TouchableOpacity> */}
                                             </View>
                                         ))
                                     }
                                 </ScrollView>
                             </View>
                         </ImageBackground>
-                        {/* {
-                            formData.selectedBuilding.value && (
-                                <View style={styles.boxContainer}>
-                                    <TouchableOpacity onPress={() => handleSelectBox(formData.selectedBuilding)}>
-                                        <ImageBackground source={formData.selectedBuilding.boxImage} style={styles.boxImage} resizeMode='contain' />
-                                    </TouchableOpacity>
-                                    <View>
-                                        <Text style={styles.boxTextHeader}>{`${formData.selectedBuilding?.title} `}</Text>
-                                        <Text style={styles.boxText}>{`${formData.selectedBuilding?.boxCost} coins`}</Text>
-                                    </View>
-                                </View>
-                            )
-                        } */}
+
                         <ImageBackground source={ImageCollectionBackground as ImageSourcePropType} style={styles.imageCollectionBackground} resizeMode='cover'>
                             <View style={styles.cards}>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -311,7 +320,6 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                                         selectedCards.map((card: any) => (
                                             <TouchableOpacity key={card.name} style={styles.card} onPress={() => handleSelectCard(card)}>
                                                 <ImageBackground source={card.image as ImageSourcePropType} style={styles.cardImage} resizeMode='contain' >
-                                                    {/* <Text style={styles.cardCountText}>{card.count}</Text> */}
                                                     <View style={{ paddingVertical: 10 }}>
                                                         <AnimatedCounter targetValue={card.count} duration={500} />
                                                     </View>
@@ -322,13 +330,6 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                                 </ScrollView>
                             </View>
                         </ImageBackground>
-                        {/* <Divider /> */}
-
-                        {/* <View style={styles.alertButtonGroup}>
-                            <View style={styles.alertButton}>
-                                <ImageButton title="BACK" onPress={() => onCancel()} />
-                            </View>
-                        </View> */}
                     </ImageBackground>
                 </View>
             </View>

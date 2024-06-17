@@ -18,45 +18,45 @@ const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
 
     return (<>
         <Modal visible={isOpen} animationType="fade" transparent={true} onRequestClose={() => onCancel()}>
-            <TouchableOpacity style={styles.modalContainer} onPressOut={() => { onCancel() }}>
-                <View style={styles.modalView}>
-                    <View style={styles.alert}>
-                        <Image style={styles.alertIcon} source={staticImage as ImageSourcePropType} />
-                        {/* <Text style={styles.alertTitle}>Shop</Text> */}
-                        <Text style={styles.alertMessage}>You can invite your friend and earn extra spins and coins</Text>
-                        <View style={{
-                            justifyContent: 'center',
-                            paddingVertical: 5,
-                        }}>
-                            <Text style={styles.label}>Email</Text>
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={(text) => setFormData({ ...formData, email: text })}
-                                value={formData.email}
-                                placeholder="Input email to invite your friend"
-                            />
-                            <Text style={styles.label}>Message</Text>
-                            <TextInput
-                                style={styles.message}
-                                onChangeText={(text) => setFormData({ ...formData, message: text })}
-                                value={formData.message}
-                                placeholder="Input your message"
-                                multiline={true}
-                                numberOfLines={8}
+            {/* <TouchableOpacity style={styles.modalContainer} onPressOut={() => { onCancel() }}> */}
+            <View style={styles.modalView}>
+                <View style={styles.alert}>
+                    <Image style={styles.alertIcon} source={staticImage as ImageSourcePropType} />
+                    {/* <Text style={styles.alertTitle}>Shop</Text> */}
+                    <Text style={styles.alertMessage}>You can invite your friend and earn extra spins and coins</Text>
+                    <View style={{
+                        justifyContent: 'center',
+                        paddingVertical: 5,
+                    }}>
+                        <Text style={styles.label}>Email</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={(text) => setFormData({ ...formData, email: text })}
+                            value={formData.email}
+                            placeholder="Input email to invite your friend"
+                        />
+                        <Text style={styles.label}>Message</Text>
+                        <TextInput
+                            style={styles.message}
+                            onChangeText={(text) => setFormData({ ...formData, message: text })}
+                            value={formData.message}
+                            placeholder="Input your message"
+                            multiline={true}
+                            numberOfLines={8}
 
-                            />
+                        />
+                    </View>
+                    <View style={styles.alertButtonGroup}>
+                        <View style={styles.alertButton}>
+                            <ImageButton title="INVITE" onPress={() => handleInvite()} />
                         </View>
-                        <View style={styles.alertButtonGroup}>
-                            <View style={styles.alertButton}>
-                                <ImageButton title="INVITE" onPress={() => handleInvite()} />
-                            </View>
-                            <View style={styles.alertButton}>
-                                <ImageButton title="BACK" onPress={() => onCancel()} />
-                            </View>
+                        <View style={styles.alertButton}>
+                            <ImageButton title="BACK" onPress={() => onCancel()} />
                         </View>
                     </View>
                 </View>
-            </TouchableOpacity>
+            </View>
+            {/* </TouchableOpacity> */}
         </Modal>
     </>)
 }
@@ -156,8 +156,8 @@ const styles = StyleSheet.create({
         color: '#000',
         fontFamily: 'Roboto',
         fontWeight: '500',
-        alignItems: 'flex-start', 
-        textAlignVertical: 'top', 
+        alignItems: 'flex-start',
+        textAlignVertical: 'top',
     },
 
 });
