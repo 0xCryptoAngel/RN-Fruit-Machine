@@ -9,6 +9,9 @@ import Settings from './Settings';
 import Home from './Home';
 import Game from './Game';
 import Payment from './Payment';
+import VillageScreen from './Village';
+import CollectionScreen from './Collection';
+
 
 const Stack = createStackNavigator();
 const TopTabs = createMaterialTopTabNavigator();
@@ -63,6 +66,16 @@ const SignedIn = () => {
         name="Game"
         component={Game}
         options={{ headerShown: false, title: appSettings.t('Game') }}
+      />
+      <Stack.Screen
+        name="Village"
+        component={VillageScreen}
+        options={{ headerShown: false, title: appSettings.t('Village') }}
+      />
+      <Stack.Screen
+        name="Collection"
+        component={CollectionScreen}
+        options={{ headerShown: false, title: appSettings.t('Village') }}
       />
       <Stack.Screen
         name="Settings"

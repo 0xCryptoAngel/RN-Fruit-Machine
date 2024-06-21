@@ -10,21 +10,27 @@ import ImageMachine from '../../../static/assets/background-machine.png';
 import ImageSpin from '../../../static/assets/spin_button_small.png';
 import ImageGoldenTicket from '../../../static/assets/golden-ticket-small.png';
 import ImageShield from '../../../static/assets/shield.png';
-import ImageShop from '../../../static/assets/shop-2.png';
-import ImageBonus from '../../../static/assets/business-earning.png';
+import ImageShop from '../../../static/assets/shop.png';
+import ImageBonus from '../../../static/assets/invite.png';
 import ImageCoinBack from '../../../static/assets/coin-bar.png';
 import ImageTimerBack from '../../../static/assets/timer-bar.png';
+import ImageBlockBak from '../../../static/assets/block_counter.png';
 import ImageSpinBack from '../../../static/assets/spin-bar.png';
 import ImageGoldenTicketBlank from '../../../static/assets/golden-ticket-blank.png';
 import ImageShieldBlank from '../../../static/assets/shield-blank.png';
 import ImageLogoText from '../../../static/assets/logo-text.png';
 import ImageMyVillage from '../../../static/assets/myvillage.png';
+import ImageArrowDown from '../../../static/assets/arrow.png';
 
 import { getUser, updateUser } from '../../services/gameService';
 import { UserContext } from '../../App';
 import { sendEmail } from '../../services/emailService';
 import appConfig from '../../util/config';
 import ResultDialog from '../dialogs/ResultDialog';
+import CoinBar from '../custom/CoinBar';
+import BlockBar from '../custom/BlockBar';
+import LevelBar from '../custom/LevelBar';
+import ShieldBar from '../custom/ShieldBar';
 
 const fruitList = [
     {
@@ -77,7 +83,6 @@ const FruitMachine = () => {
     const user = useContext(UserContext);
 
     const navigation: any = useNavigation();
-
 
     const [spinning, setSpinning] = useState(false);
     const [isVisible, setVisible] = useState(false);
@@ -399,6 +404,15 @@ const FruitMachine = () => {
             });
 
         setVisible(false);
+
+        setResultData([
+            {
+                name: 'Spin',
+                description: 'You got the extra spins',
+                amount: params.value,
+            }
+        ]);
+        setVisibleResult(true)
     }
     const onInvite = async (params: any) => {
         console.log('invite dialog', params);
@@ -609,14 +623,23 @@ const FruitMachine = () => {
         if (params.key == "time_keeper5") {
             console.log('you got time keeper5');
         }
+
         if (params.key == "block") {
             updatedPlayerData.block = (updatedPlayerData.block || 0) + 1;
+        }
+        if (params.key == "block2") {
+            updatedPlayerData.block = (updatedPlayerData.block || 0) + 2;
+        }
+        if (params.key == "block3") {
+            updatedPlayerData.block = (updatedPlayerData.block || 0) + 3;
+        }
+        if (params.key == "block4") {
+            updatedPlayerData.block = (updatedPlayerData.block || 0) + 4;
+        }
 
-            if (updatedPlayerData.block > updatedPlayerData.level * 10) { // Level UP
-                updatedPlayerData.level = updatedPlayerData.level + 1;
-                updatedPlayerData.block = 0;
-
-            }
+        if (updatedPlayerData.block > updatedPlayerData.level * 10) { // Level UP
+            updatedPlayerData.level = updatedPlayerData.level + 1;
+            updatedPlayerData.block = 0;
         }
 
         setPlayerData(updatedPlayerData);
@@ -632,43 +655,34 @@ const FruitMachine = () => {
     return (
         <View style={styles.container}>
             <View style={styles.gameDetail}>
-                <View style={styles.inventory}>
+                <View style={styles.status}>
+                    <LevelBar currentAmount={playerData.level} targetAmount={40} />
+                    <BlockBar currentAmount={playerData.block} targetAmount={playerData.level * 10} />
+                    <CoinBar coinAmount={playerData.coins} />
+                </View>
+                {/* <View style={styles.inventory}>
                     <ImageBackground style={styles.coinBar} source={ImageCoinBack as ImageSourcePropType} resizeMode="contain">
                         <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
                     </ImageBackground>
                     <View style={styles.inventoryImage}>
-                        <View style={{ width: 60, height: 60, padding: 5, borderRadius: 50, backgroundColor: '#f1f1f1',}}>
+                        <View style={{ width: 60, height: 60, padding: 5, borderRadius: 50, backgroundColor: '#f1f1f1', }}>
                             < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' >
                                 <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#f00' }}>{playerData.level} </Text>
                                 <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#03dddf' }}>Level</Text>
                             </ImageBackground>
                         </View>
-                        {/* {
-                            playerData.golden_ticket_owned ? (
-                                < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
-                            ) : (
-                                < ImageBackground source={ImageGoldenTicketBlank as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' />
-                            )
-                        } */}
                     </View>
                     <View style={styles.inventoryImage}>
                         < ImageBackground source={ImageShield as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' >
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#00f' }}>{playerData.shield} </Text>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#00f', textAlign: 'center' }}>{playerData.shield} </Text>
                         </ImageBackground>
-                        {/* {
-                            playerData.shield > 0 ? (
-                                <Image source={ImageShield as ImageSourcePropType} style={styles.smallImage} />
-                            ) : (
-                                <Image source={ImageShieldBlank as ImageSourcePropType} style={styles.smallImage} />
-                            )
-                        } */}
                     </View>
-                </View>
-                <View style={styles.inventory}>
-                    <ImageBackground style={styles.timerBar} source={ImageTimerBack as ImageSourcePropType} resizeMode="cover">
+                </View> */}
+                {/* <View style={styles.inventory}>
+                    <ImageBackground style={styles.blockBar} source={ImageBlockBak as ImageSourcePropType} resizeMode="cover">
                         <Text style={styles.levelText}>{`${playerData.block || 0}/${(playerData.level || 1) * 10}`}</Text>
                     </ImageBackground>
-                </View>
+                </View> */}
             </View>
             <ImageBackground style={styles.machine} source={ImageMachine as ImageSourcePropType} resizeMode="stretch" >
                 <View style={styles.slotsContainer} >
@@ -687,36 +701,36 @@ const FruitMachine = () => {
                         </Animated.View>
                     ))}
                 </View>
+                <View style={{ position: 'absolute', top: -20 }}>
+                    <Image source={ImageLogoText as ImageSourcePropType} style={styles.logoImage} />
+                </View>
+                <View style={styles.infoPanel}>
+                    <Animated.Text
+                        style={[styles.infoText,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ scale: scaleAnim }]
+                        }]}>
+                        {infoText}
+                    </Animated.Text>
+                </View>
             </ImageBackground>
-
-            <View style={{ position: 'absolute', top: 120 }}>
-                <Image source={ImageLogoText as ImageSourcePropType} style={styles.logoImage} />
-            </View>
-            <View style={styles.infoPanel}>
-                <Animated.Text
-                    style={[styles.infoText,
-                    {
-                        opacity: fadeAnim,
-                        transform: [{ scale: scaleAnim }]
-                    }]}>
-                    {infoText}
-                </Animated.Text>
-            </View>
 
             <ImageBackground style={styles.spinBar} source={ImageSpinBack as ImageSourcePropType} resizeMode="contain">
                 <Text style={styles.valueText}>{`${playerData.spins}`}</Text>
             </ImageBackground>
 
             <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} style={{ width: 300, height: 100 }} />
+            <GameButton background={ImageArrowDown} title={"Village"} onPress={() => navigation.navigate('Village')} disabled={spinning} style={{ width: 100, height: 50 }} />
 
-            <View style={{ position: 'absolute', top: 30, right: 10 }}>
+            <View style={{ position: 'absolute', top: 10, right: 10 }}>
                 <GameButton background={ImageShop} title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} />
             </View>
-            <View style={{ position: 'absolute', top: 85, right: 10 }}>
+            <View style={{ position: 'absolute', top: 60, right: 10 }}>
                 <GameButton background={ImageBonus} title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} />
             </View>
-            <View style={{ position: 'absolute', top: 85, right: 70 }}>
-                <GameButton background={ImageMyVillage} title={"Village"} onPress={() => setVisibleVillage(true)} disabled={spinning} />
+            <View style={{ position: 'absolute', top: 120, right: 10 }}>
+                 <ShieldBar currentAmount={playerData.shield} targetAmount={100} />       
             </View>
 
             <ShopDialog isOpen={isVisible} data={playerData} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
@@ -807,8 +821,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         paddingVertical: 5,
         paddingHorizontal: 10,
-        marginTop: 30,
-        marginBottom: 25,
+        marginTop: 10,
+        marginBottom: 5,
+    },
+    status: {
+        width: '100%',
+        alignItems: 'center'
     },
     infoRow: {
         width: '100%',
@@ -843,7 +861,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto'
     },
     inventory: {
-        height: 40,
+        height: 50,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
@@ -853,13 +871,14 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         marginVertical: 0,
-        marginRight: 5,
+        // marginRight: 5,
         justifyContent: 'center',
         alignItems: 'center',
+
     },
     infoPanel: {
         position: 'absolute',
-        top: 160,
+        top: 20,
         width: '100%',
         marginBottom: 20,
         borderColor: '#fff',
@@ -883,25 +902,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    timerBar: {
+    blockBar: {
         width: 200,
         // width: '100%', 
-        height: 40,
+        height: 50,
         paddingHorizontal: 0,
         alignItems: 'center',
         justifyContent: 'center',
     },
     spinBar: {
         width: 200,
-        height: 80,
-        paddingHorizontal: 10,
+        height: 50,
+        // paddingHorizontal: 5,
         alignItems: 'center',
         justifyContent: 'center',
     },
     logoImage: {
         width: 300,
         height: 70,
-    }
+    },
+   
 });
 
 export default FruitMachine;

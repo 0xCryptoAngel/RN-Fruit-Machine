@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Modal, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground, ScrollView, Dimensions } from 'react-native';
 
 import AnimatedCounter from '../animation/AnimatedCounter';
+
 import ImageBuildingEnchanted from '../../../static/assets/casltes_magic.png';
 import ImageBuildingProtection from '../../../static/assets/casltes_defence.png';
 import ImageBuildingResource from '../../../static/assets/casltes_resource.png';
@@ -19,6 +20,7 @@ import ImageCardShield2x from '../../../static/assets/card_shield_x2.png';
 import ImageCardShield3x from '../../../static/assets/card_shield_x3.png';
 import ImageCardStealCoin from '../../../static/assets/card_steal_coin.png';
 import ImageCardStealTicket from '../../../static/assets/card_steal_ticket.png';
+import ImageCardStealBlock from '../../../static/assets/card_steal_block.png';
 import ImageCardTimekeeper from '../../../static/assets/card_time_keeper.png';
 import ImageCardTimekeeper5 from '../../../static/assets/card_timekeeper5.png';
 import ImageCardStealXtraSpin10 from '../../../static/assets/card_xtra_spin_10.png';
@@ -26,12 +28,17 @@ import ImageCardStealXtraSpin20 from '../../../static/assets/card_xtra_spins_20.
 import ImageCardStealXtraSpin30 from '../../../static/assets/card_xtra_spins_30.png';
 import ImageCardStealXtraSpin40 from '../../../static/assets/card_xtra_spins_40.png';
 import ImageCardStealXtraSpin100 from '../../../static/assets/card_xtra_spins_100.png';
-import ImageCardBlock from '../../../static/assets/card_timekeeper5.png';
+import ImageCardBlock1 from '../../../static/assets/1_tower_blocks.png';
+import ImageCardBlock2 from '../../../static/assets/2_tower_blocks.png';
+import ImageCardBlock3 from '../../../static/assets/3_tower_blocks.png';
+import ImageCardBlock4 from '../../../static/assets/4_tower_blocks.png';
+
 import BackArrowImg from '../../../static/assets/back_arrow_button.png';
 
 import ImageCardLibrary from '../../../static/assets/castle_back_ground.png';
 import ImageCastleBackground from '../../../static/assets/castle_bg_crop.png';
 import ImageCollectionBackground from '../../../static/assets/colletions_bg_crop.png';
+import ImageCoinBack from '../../../static/assets/coin-bar.png';
 
 import { ImageButton, BuyButton } from '../buttons';
 import { Divider } from '../dividers';
@@ -50,6 +57,9 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             cards: [
                 // 'time_keeper5',
                 'block', // towers has blocks and it effect the level of user
+                'block2',
+                'block3',
+                'block4'
             ]
         },
         {
@@ -112,7 +122,7 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
         {
             key: 'steal_block',
             name: 'Steal Block',
-            image: ImageCardStealTicket,
+            image: ImageCardStealBlock,
             count: 0,
         },
         // {
@@ -190,7 +200,25 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
         {
             key: 'block',
             name: 'Blocks for Level',
-            image: ImageCardBlock,
+            image: ImageCardBlock1,
+            count: 0,
+        },
+        {
+            key: 'block2',
+            name: '2 Blocks for Level',
+            image: ImageCardBlock2,
+            count: 0,
+        },
+        {
+            key: 'block3',
+            name: '3 Blocks for Level',
+            image: ImageCardBlock3,
+            count: 0,
+        },
+        {
+            key: 'block4',
+            name: '4 Blocks for Level',
+            image: ImageCardBlock4,
             count: 0,
         },
     ])
@@ -241,7 +269,7 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             boxCost: params.boxCost,
             ...selectedCard
         });
-        
+
         handleSelectBuilding(params);
 
     }
@@ -292,10 +320,13 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                 <View style={styles.alert}>
                     <ImageBackground source={ImageCardLibrary as ImageSourcePropType} style={styles.imageBackground} resizeMode='cover'>
                         <TouchableOpacity style={styles.backArrowButton} onPress={() => onCancel()}>
-                            <ImageBackground source={BackArrowImg as ImageSourcePropType} style={styles.backArrowButton} resizeMode='cover' />
+                            <ImageBackground source={BackArrowImg as ImageSourcePropType} style={styles.backArrowImage} resizeMode='cover' />
                         </TouchableOpacity>
                         <ImageBackground source={ImageCastleBackground as ImageSourcePropType} style={styles.imageCastleBackground} resizeMode='cover'>
-                            <Text style={styles.alertMessage}>{`${machineData.coins} coins now`}</Text>
+                            {/* <Text style={styles.alertMessage}>{`${machineData.coins} coins now`}</Text> */}
+                            <ImageBackground style={styles.coinBar} source={ImageCoinBack as ImageSourcePropType} resizeMode="contain">
+                                <Text style={styles.valueText}>{`${machineData.coins}`}</Text>
+                            </ImageBackground>
                             <View style={styles.buildings}>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} >
                                     {
@@ -303,7 +334,13 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
                                             <View key={index} style={styles.building}>
                                                 <TouchableOpacity key={index} style={styles.building} onPress={() => handleSelectBuilding(item)}>
                                                     <ImageBackground source={item.image} style={styles.buildingImage} resizeMode='contain' />
-                                                    <Text style={{ marginVertical: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: item.value == formData.selectedBuilding.value ? '#f80' : "#333" }}> {`${item.title} : ${item?.boxCost} coins`}</Text>
+                                                    <Text style={{
+                                                        marginVertical: 1,
+                                                        textAlign: 'center',
+                                                        fontSize: 18,
+                                                        fontWeight: 'bold',
+                                                        color: item.value == formData.selectedBuilding.value ? '#008' : "#333"
+                                                    }}> {`${item.title} : ${item?.boxCost}`}</Text>
                                                 </TouchableOpacity>
                                                 <BuyButton onPress={() => handleSelectBox(item)} />
                                             </View>
@@ -439,9 +476,14 @@ const styles = StyleSheet.create({
     backArrowButton: {
         position: 'absolute',
         right: 5,
-        top: 5,
-        width: 50,
-        height: 50,
+        top: 6,
+        width: 40,
+        height: 40,
+        zIndex: 100,
+    },
+    backArrowImage: {
+        width: 40,
+        height: 40,
     },
     buyCoins: {
         flexDirection: 'row',
@@ -525,7 +567,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     imageCastleBackground: {
-        marginTop: 40,
+        marginTop: 0,
         resizeMode: 'contain',
         width: '100%',
         // height: '100%',
@@ -537,6 +579,21 @@ const styles = StyleSheet.create({
         // height: '120%',
         height: 330,
         // paddingTop: '25%',
+    },
+    coinBar: {
+        marginTop: 60,
+        width: '100%',
+        height: 50,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    valueText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#410577',
+        paddingHorizontal: 5,
+        fontFamily: 'Roboto'
     },
 });
 

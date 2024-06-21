@@ -16,6 +16,7 @@ import ImageShop from '../../../static/assets/shop_bachground.png'
 import BackArrowImg from '../../../static/assets/back_arrow_button.png';
 import ChargeMoneyImg from '../../../static/assets/charge_money.jpg';
 import ImageCoinBack from '../../../static/assets/coin-bar.png';
+import ImageWinning from '../../../static/assets/winnings.png';
 
 import { Divider } from '../dividers';
 
@@ -76,10 +77,10 @@ const ResultDialog = ({ isOpen, data, onOK, onCancel }: any) => {
             <View style={styles.modalContainer} >
                 <View style={styles.modalView}>
                     <ImageBackground source={ImageResult as ImageSourcePropType} style={styles.body}>
-                        <Text style={styles.titleText}>Result</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
-                            <ImageBackground style={styles.coinBar} source={ImageCoinBack as ImageSourcePropType} resizeMode="cover">
-                                <Text style={styles.coinText}>You Won</Text>
+                        {/* <Text style={styles.titleText}>Result</Text> */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginVertical: 30 }}>
+                            <ImageBackground style={styles.coinBar} source={ImageWinning as ImageSourcePropType} resizeMode="contain">
+                                {/* <Text style={styles.coinText}>You Won</Text> */}
                             </ImageBackground>
                         </View>
                         <View style={{ height: '80%', borderRadius: 10 }}>
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     body: {
         flex: 1,
         width: '100%',
-        marginTop: 20,
+        // marginTop: 20,
         elevation: 24,
         borderRadius: 2,
         // backgroundColor: '#fff',
@@ -237,10 +238,10 @@ const styles = StyleSheet.create({
     },
     backArrowButton: {
         position: 'absolute',
-        right: 10,
-        top: 20,
-        width: 50,
-        height: 50,
+        right: 5,
+        top: 15,
+        width: 40,
+        height: 40,
     },
     coinText: {
         fontSize: 36,
@@ -257,11 +258,11 @@ const styles = StyleSheet.create({
     },
     coinBar: {
         width: '100%',
-        height: 80,
+        height: 150,
         // paddingHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        resizeMode: 'cover'
+        resizeMode: 'contain'
     },
     leftImage: {
         width: 50,
