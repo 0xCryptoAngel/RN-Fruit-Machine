@@ -383,18 +383,19 @@ const FruitMachine = () => {
         });
     };
 
-    const onBuyCoinSpin = async (params: any) => {
+    const onBuyCoinAndSpin = async (params: any) => {
         console.log('buy spins', params);
-
+        
+        const recentData: any = await getUser(user?.email);        
         setPlayerData({
             ...playerData,
-            coins: playerData.coins - params.cost,
-            spins: playerData.spins + params.value,
+            gems: recentData.coins - params.cost,
+            spins: recentData.spins + params.value,
         });
 
         updateUser(user?.email, {
-            coins: playerData.coins - params.cost,
-            spins: playerData.spins + params.value,
+            coins: recentData.coins - params.cost,
+            spins: recentData.spins + params.value,
         })
             .then(() => {
                 console.log('User updated successfully');
@@ -412,7 +413,7 @@ const FruitMachine = () => {
                 amount: params.value,
             }
         ]);
-        setVisibleResult(true)
+        setVisibleResult(true);
     }
     const onInvite = async (params: any) => {
         console.log('invite dialog', params);
@@ -733,7 +734,7 @@ const FruitMachine = () => {
                  <ShieldBar currentAmount={playerData.shield} targetAmount={100} />       
             </View>
 
-            <ShopDialog isOpen={isVisible} data={playerData} onOK={(params: any) => onBuyCoinSpin(params)} onCancel={() => setVisible(false)} />
+            <ShopDialog isOpen={isVisible} data={playerData} onOK={(params: any) => onBuyCoinAndSpin(params)} onCancel={() => setVisible(false)} />
             <SpinsOutDialog isOpen={isVisibleSpinsOut} onOK={() => setVisible(true)} onCancel={() => setVisibleSpinsOut(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
 

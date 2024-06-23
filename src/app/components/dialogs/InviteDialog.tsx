@@ -172,10 +172,9 @@ const styles = StyleSheet.create({
     body: {
         flex: 1,
         width: '100%',
-        marginTop: 20,
+        // marginTop: 20,
         elevation: 24,
         borderRadius: 2,
-        // backgroundColor: '#fff',
         resizeMode: 'contain'
     },
 
