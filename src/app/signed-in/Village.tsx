@@ -9,21 +9,18 @@ import { UserContext } from '../App';
 
 import { getUser, updateUser } from '../services/gameService';
 
-import { useAppSettings } from '../components/AppSettings';
 import { BackButton, ImageButton } from '../components/buttons';
 
 import { CARDS } from '../constants';
 
-// const background = require('../../static/assets/golden_splash.jpg');
 import ImageCardLibrary from '../../static/assets/castle_back_ground.png';
-import ImageBuildingEnchanted from '../../static/assets/casltes_magic.png';
-import ImageBuildingProtection from '../../static/assets/casltes_defence.png';
-import ImageBuildingResource from '../../static/assets/casltes_resource.png';
-import ImageBuildingAttack from '../../static/assets/casltes_attack.png';
+import ImageBuildingEnchanted from '../../static/assets/castles/castles_magic.png';
+import ImageBuildingProtection from '../../static/assets/castles/castles_defence.png';
+import ImageBuildingResource from '../../static/assets/castles/castles_resource.png';
+import ImageBuildingAttack from '../../static/assets/castles/castles_attack.png';
 import ImageArrowLeft from '../../static/assets/arrow_left.png';
 import ImageArrowRight from '../../static/assets/arrow_right.png';
-import ImageCastleBackground from '../../static/assets/castle_bg_crop.png';
-import ImageTitle from '../../static/assets/winnings.png';
+
 import ResultDialog from '../components/dialogs/ResultDialog';
 import CoinBar from '../components/custom/CoinBar';
 import BlockBar from '../components/custom/BlockBar';
@@ -223,6 +220,7 @@ function VillageScreen() {
                 </View>
                 <View style={styles.buttons}>
                     <ImageButton title={"COLLECTIONS"} onPress={() => navigation.navigate('Collection')} style={{ marginBottom: 10, }} />
+                    <ImageButton title={"MY TOWER"} onPress={() => navigation.navigate('Tower')} style={{ marginBottom: 10, }} />
                 </View>
                 <BackButton style={{ position: 'absolute', zIndex: 10, right: 10, top: 10 }} />
             </ImageBackground>

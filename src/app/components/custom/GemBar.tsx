@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ImageBackground, ImageSourcePropType } from 'react-native';
-import ImagegemBack from '../../../static/assets/coin-bar.png';
+import ImagegemBack from '../../../static/assets/crystal_counter.png';
 
 interface GemBarProps {
   gemAmount: number;
@@ -10,10 +10,10 @@ interface GemBarProps {
 
 const GemBar: React.FC<GemBarProps> = ({ gemAmount, gemIcon, backgroundImage }) => {
   return (
-    <ImageBackground source={ImagegemBack as ImageSourcePropType} style={styles.background} resizeMode='stretch'>
+    <ImageBackground source={ImagegemBack as ImageSourcePropType} style={styles.background} resizeMode='contain'>
       <View style={styles.container}>
         <Image source={gemIcon} style={styles.gemIcon} />
-        <Text style={styles.gemText}>{`Gem: ${gemAmount}`}</Text>
+        <Text style={styles.gemText}>{`${gemAmount}`}</Text>
       </View>
     </ImageBackground>
   );
@@ -21,7 +21,7 @@ const GemBar: React.FC<GemBarProps> = ({ gemAmount, gemIcon, backgroundImage }) 
 
 const styles = StyleSheet.create({
   background: {
-    width: 300,
+    width: 130,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',

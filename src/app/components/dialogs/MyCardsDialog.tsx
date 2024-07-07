@@ -3,10 +3,10 @@ import { StyleSheet, Text, View, Modal, Button, TouchableOpacity, Image, ImageSo
 
 import AnimatedCounter from '../animation/AnimatedCounter';
 
-import ImageBuildingEnchanted from '../../../static/assets/casltes_magic.png';
-import ImageBuildingProtection from '../../../static/assets/casltes_defence.png';
-import ImageBuildingResource from '../../../static/assets/casltes_resource.png';
-import ImageBuildingAttack from '../../../static/assets/casltes_attack.png';
+import ImageBuildingEnchanted from '../../../static/assets/castles/castles_magic.png';
+import ImageBuildingProtection from '../../../static/assets/castles/castles_defence.png';
+import ImageBuildingResource from '../../../static/assets/castles/castles_resource.png';
+import ImageBuildingAttack from '../../../static/assets/castles/castles_attack.png';
 
 import ImageBoxEnchanted from '../../../static/assets/box1.jpg';
 import ImageBoxProtection from '../../../static/assets/box2.jpg';
@@ -53,7 +53,7 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             value: 'building1',
             image: ImageBuildingEnchanted,
             boxCost: (machineData.level || 1) * 1000, // 3000
-            boxImage: ImageBoxEnchanted,
+            // boxImage: ImageBoxEnchanted,
             cards: [
                 // 'time_keeper5',
                 'block', // towers has blocks and it effect the level of user
@@ -68,7 +68,7 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             value: 'building2',
             image: ImageBuildingProtection,
             boxCost: 4000,
-            boxImage: ImageBoxProtection,
+            // boxImage: ImageBoxProtection,
             cards: [
                 'shield',
                 'shield_2x',
@@ -81,7 +81,7 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             value: 'building3',
             image: ImageBuildingResource,
             boxCost: 5000,
-            boxImage: ImageBoxResource,
+            // boxImage: ImageBoxResource,
             cards: [
                 'coin_200k',
                 'coin_2x',
@@ -97,7 +97,7 @@ const MyCardsDialog = ({ isOpen, machineData, onOK, onCancel, onSelectBox, onSel
             value: 'building4',
             image: ImageBuildingAttack,
             boxCost: 6000,
-            boxImage: ImageBoxAttack,
+            // boxImage: ImageBoxAttack,
             cards: [
                 'steal_coin',
                 'steal_block',

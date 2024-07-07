@@ -1,9 +1,5 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Platform, StyleSheet, View, ImageBackground, ImageSourcePropType, Text, Image } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
-import { useLinkTo } from '@react-navigation/native';
-import { useAppSettings } from '../components/AppSettings';
-import { ImageButton } from '../components/buttons';
 import { FruitMachine } from '../components/fruit-machine';
 import Background from '../../static/assets/game-background.jpg';
 // import GoldenTicket from '../../static/assets/golden-ticket.jpg';
@@ -11,12 +7,9 @@ import Background from '../../static/assets/game-background.jpg';
 function Game({route}: any) {
     const params = route.params;
     const [refreshKey, setRefreshKey] = useState(0);
-    const theme = useTheme();
-    const appSettings = useAppSettings();
-    const linkTo = useLinkTo();
     
     const refreshFruitMachine = () => {
-        setRefreshKey(prevKey => prevKey + 1); // Update the key to force remount
+        setRefreshKey(prevKey => prevKey + 1);
     };
 
     useEffect(() => {

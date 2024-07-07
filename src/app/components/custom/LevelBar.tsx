@@ -32,7 +32,7 @@ const LevelBar: React.FC<LevelBarProps> = ({ currentAmount, targetAmount }) => {
 const styles = StyleSheet.create({
   background: {
     // width: '100%',
-    width: 300,
+    width: 200,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   container: {
     width: '100%',
-    paddingLeft: 80,
+    paddingLeft: 50,
     paddingRight: 20,
     flexDirection: 'row',
     alignItems: 'center',

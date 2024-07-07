@@ -22,14 +22,14 @@ const BlockBar: React.FC<BlockBarProps> = ({ currentAmount, targetAmount }) => {
 const styles = StyleSheet.create({
   background: {
     // width: '100%',
-    width: 300,
-    height: 50,
+    width: 200,
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 3,
   },
   container: {
-    paddingLeft: 80,
+    paddingLeft: 50,
     paddingRight: 20,
     flexDirection: 'row',
     alignItems: 'center',

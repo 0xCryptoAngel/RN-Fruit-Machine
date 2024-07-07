@@ -1,18 +1,13 @@
 import { Fragment } from 'react';
 import { Platform, StyleSheet, View, ImageBackground, ImageSourcePropType } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
-import { useLinkTo } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 
-import { useAppSettings } from '../components/AppSettings';
 import { ImageButton } from '../components/buttons';
-const background = require('../../static/assets/golden_splash.jpg');
+import background from '../../static/assets/golden_splash.jpg';
+
 function Home() {
-    const theme = useTheme();
-    const appSettings = useAppSettings();
-    const linkTo = useLinkTo();
+    
     const navigation: any = useNavigation();
     async function signOut() {
         // setSigningOut(true);
@@ -21,7 +16,7 @@ function Home() {
     }
     return (
         <Fragment>
-            <ImageBackground style={styles.container} source={background}>
+            <ImageBackground style={styles.container} source={background as ImageSourcePropType}>
                 <View style={styles.buttons}>
                     <ImageButton title={"Play Now"} onPress={() => navigation.navigate('Game')} style={{ marginVertical: 10, }} />
                     <ImageButton title={"Settings"} onPress={() => navigation.navigate('Settings')} style={{ marginBottom: 10, }} />

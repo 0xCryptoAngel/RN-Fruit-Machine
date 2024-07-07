@@ -1,31 +1,29 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, Modal, Button, TouchableOpacity, Image, ImageSourcePropType, ImageBackground, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
-import CoinBar from '../custom/CoinBar';
-import GemBar from '../custom/GemBar';
-import staticImage from '../../../static/assets/golden-ticket-small.png';
-import ImageCoin600k from '../../../static/assets/card_200k_coins.png' //600k.jpg
-import ImageCoin1m from '../../../static/assets/card_200k_coins.png' //1m.jpg
-import ImageCoin4m from '../../../static/assets/card_200k_coins.png' //4m.jpg
-
-import ImageSpin10 from '../../../static/assets/card_xtra_spin_10.png' //10
-import ImageSpin25 from '../../../static/assets/card_xtra_spins_20.png' //25
-import ImageSpin75 from '../../../static/assets/card_xtra_spins_40.png' //75
-import ImageSpin200 from '../../../static/assets/card_xtra_spins_100.png' //200
-
-import ImageShop from '../../../static/assets/shop_bachground.png'
-import BackArrowImg from '../../../static/assets/back_arrow_button.png';
-import ChargeMoneyImg from '../../../static/assets/charge_money.jpg';
-import ImageCoinBack from '../../../static/assets/coin-bar.png';
-
-import { ImageButton } from '../buttons';
-import { Divider } from '../dividers';
-
 import { ScrollView } from 'react-native-gesture-handler';
+
+import GemBar from '../custom/GemBar';
+// import ImageCoin600k from '../../../static/assets/card_200k_coins.png' //600k.jpg
+// import ImageCoin1m from '../../../static/assets/card_200k_coins.png' //1m.jpg
+// import ImageCoin4m from '../../../static/assets/card_200k_coins.png' //4m.jpg
+
+import ImageCoinX2 from '../../../static/assets/shop/coin_multi_x2_shop.png';
+import ImageCoinX3 from '../../../static/assets/shop/coin_multi_x3_shop.png';
+
+
+
+import ImageSpin10 from '../../../static/assets/shop/spin_cards_10_shop.png' //10
+import ImageSpin25 from '../../../static/assets/shop/spin_cards_20_shop.png' //25
+import ImageSpin75 from '../../../static/assets/shop/spin_cards_30_shop.png' //75
+import ImageSpin200 from '../../../static/assets/shop/spin_cards_40_shop.png' //200
+
 import ImageGem150 from '../../../static/assets/gems_150.png';
 import ImageGem500 from '../../../static/assets/gems_500.png';
 import ImageGem2500 from '../../../static/assets/gems_2500.png';
+
+import BackArrowImg from '../../../static/assets/back_arrow_button.png';
+
 
 const ShopDialog = ({ isOpen, data, onOK, onCancel }: any) => {
 
@@ -90,27 +88,42 @@ const ShopDialog = ({ isOpen, data, onOK, onCancel }: any) => {
 
     ];
     const coinItems = [
+        // {
+        //     type: 'coin',
+        //     title: 'Coin 600K',
+        //     value: 600 * 1000,
+        //     image: ImageCoin600k,
+        //     cost: 1.5
+        // },
+        // {
+        //     type: 'coin',
+        //     title: 'Coin 1M',
+        //     value: 1 * 1000000,
+        //     image: ImageCoin1m,
+        //     cost: 2.5
+        // },
+        // {
+        //     type: 'coin',
+        //     title: 'Coin 4M',
+        //     value: 4 * 1000000,
+        //     image: ImageCoin4m,
+        //     cost: 8.5,
+        // },
         {
             type: 'coin',
-            title: 'Coin 600K',
-            value: 600 * 1000,
-            image: ImageCoin600k,
-            cost: 1.5
+            title: 'Coin x2',
+            value: 2,
+            image: ImageCoinX2,
+            cost: 100,
         },
         {
             type: 'coin',
-            title: 'Coin 1M',
-            value: 1 * 1000000,
-            image: ImageCoin1m,
-            cost: 2.5
+            title: 'Coin x3',
+            value: 3,
+            image: ImageCoinX3,
+            cost: 200,
         },
-        {
-            type: 'coin',
-            title: 'Coin 4M',
-            value: 4 * 1000000,
-            image: ImageCoin4m,
-            cost: 8.5,
-        },
+
     ]
 
     const handleBuy = async (params: any) => {
@@ -118,20 +131,20 @@ const ShopDialog = ({ isOpen, data, onOK, onCancel }: any) => {
         onOK(params);
     }
 
-    const chargeMoney = async ({ gem } : any) => {
+    const chargeMoney = async (gem : any) => {
         navigation.navigate('Payment', {
-            'item': 'Coin',
-            'amount': 100,
-            'cost': 4.99,
-            'currentCoins': data.coins,
+            'item': 'Gem',
+            'amount': gem.value,
+            'cost': gem.cost,
+            'currentCoins': gem.coins,
             'currentSpins': 0,
         });
     }
     const GridItem = ({ item, onClick }: any) => (
         <View style={styles.gridItem} >
-            <TouchableOpacity style={styles.coinItem} onPress={() => onClick}>
+            <TouchableOpacity style={styles.coinItem} onPress={() => onClick()}>
                 <ImageBackground source={item.image} style={styles.spinImage} resizeMode='contain'>
-                    <Text style={styles.price}>{`${item.cost}`}</Text>
+                    {item.type != 'gem' && (<Text style={styles.price}>{`${item.cost}`}</Text>)}
                 </ImageBackground>
             </TouchableOpacity>
         </View>
@@ -148,11 +161,7 @@ const ShopDialog = ({ isOpen, data, onOK, onCancel }: any) => {
                     <View style={styles.body}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
                             <GemBar gemAmount={data?.gems || 0} />
-                            {/* <TouchableOpacity style={styles.chargeButton} onPress={chargeMoney}>
-                                <ImageBackground source={ChargeMoneyImg as ImageSourcePropType} style={styles.chargeButton} resizeMode='cover' />
-                            </TouchableOpacity> */}
                         </View>
-                        {/* <Text style={styles.alertMessage}></Text> */}
                         <ScrollView style={styles.scroll}>
                             <Text style={styles.divideText}>GEMS</Text>
                             <View style={styles.items}>
@@ -236,9 +245,9 @@ const styles = StyleSheet.create({
     },
     price: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: '600',
-        paddingBottom: 10,
+        paddingBottom: 40,
     },
 
     contentContainer: {
@@ -257,9 +266,6 @@ const styles = StyleSheet.create({
         padding: 5,
         overflow: 'hidden',
         flexBasis: '45%'
-        // backgroundColor: '#ccc',
-        // borderRadius: 10,
-        // elevation: 5,
     },
     backArrowButton: {
         position: 'absolute',
@@ -280,8 +286,9 @@ const styles = StyleSheet.create({
         color: '#fff',
         borderTopColor: '#e9c394',
         borderTopWidth: 1,
-        paddingTop: 10,
-        marginTop: 10
+        paddingVertical: 10,
+        marginTop: 10,
+        backgroundColor: '#f36686'
     },
     scroll: {
         flex: 1,

@@ -661,29 +661,6 @@ const FruitMachine = () => {
                     <BlockBar currentAmount={playerData.block} targetAmount={playerData.level * 10} />
                     <CoinBar coinAmount={playerData.coins} />
                 </View>
-                {/* <View style={styles.inventory}>
-                    <ImageBackground style={styles.coinBar} source={ImageCoinBack as ImageSourcePropType} resizeMode="contain">
-                        <Text style={styles.valueText}>{`${playerData.coins}`}</Text>
-                    </ImageBackground>
-                    <View style={styles.inventoryImage}>
-                        <View style={{ width: 60, height: 60, padding: 5, borderRadius: 50, backgroundColor: '#f1f1f1', }}>
-                            < ImageBackground source={ImageGoldenTicket as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' >
-                                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#f00' }}>{playerData.level} </Text>
-                                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#03dddf' }}>Level</Text>
-                            </ImageBackground>
-                        </View>
-                    </View>
-                    <View style={styles.inventoryImage}>
-                        < ImageBackground source={ImageShield as ImageSourcePropType} style={styles.smallImage} resizeMode='contain' >
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#00f', textAlign: 'center' }}>{playerData.shield} </Text>
-                        </ImageBackground>
-                    </View>
-                </View> */}
-                {/* <View style={styles.inventory}>
-                    <ImageBackground style={styles.blockBar} source={ImageBlockBak as ImageSourcePropType} resizeMode="cover">
-                        <Text style={styles.levelText}>{`${playerData.block || 0}/${(playerData.level || 1) * 10}`}</Text>
-                    </ImageBackground>
-                </View> */}
             </View>
             <ImageBackground style={styles.machine} source={ImageMachine as ImageSourcePropType} resizeMode="stretch" >
                 <View style={styles.slotsContainer} >
@@ -738,14 +715,14 @@ const FruitMachine = () => {
             <SpinsOutDialog isOpen={isVisibleSpinsOut} onOK={() => setVisible(true)} onCancel={() => setVisibleSpinsOut(false)} />
             <InviteDialog isOpen={isVisibleInvite} onOK={(params: any) => onInvite(params)} onCancel={() => setVisibleInvite(false)} />
 
-            <MyCardsDialog
+            {/* <MyCardsDialog
                 isOpen={isVisibleVillage}
                 machineData={playerData}
                 onSelectBox={onSelectBox}
                 onSelectCard={onSelectCard}
                 onOK={(params: any) => { }}
                 onCancel={() => setVisibleVillage(false)}
-            />
+            /> */}
 
             <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onMap(params)} onCancel={() => setVisibleMap(false)} />
             <ResultDialog isOpen={isVisibleResult} data={resultData} onCancel={() => setVisibleResult(false)} />

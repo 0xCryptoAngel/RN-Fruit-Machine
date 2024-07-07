@@ -63,7 +63,7 @@ function Payment({ route }: any) {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Authorization': `Bearer ${appConfig.stripeSK}`,
                 },
-                body: `amount=${selectedItem.cost * 100}&currency=gbp&payment_method_types[]=card`,
+                body: `amount=${params.cost * 100}&currency=gbp&payment_method_types[]=card`,
             });
 
             if (!response.ok) {
@@ -84,10 +84,10 @@ function Payment({ route }: any) {
     };
 
     const handleConfirmPayment = async () => {
-        if(!selectedItem.value) { 
-            console.log('Please select one item');
-            return;
-        }
+        // if(!selectedItem.value) { 
+        //     console.log('Please select one item');
+        //     return;
+        // }
 
         try {
             // const clientSecret = '';
@@ -108,15 +108,16 @@ function Payment({ route }: any) {
                         const oldData: any = await getUser(user?.email);
 
                         updateUser(user?.email, {
-                            gems: (oldData.gems || 0) + selectedItem.value
+                            gems: (oldData.gems || 0) + params.amount
                         })
                             .then(() => {
                                 console.log('User updated successfully');
 
                                 navigation.navigate('Game', {
                                     'payment': 'success',
-                                    'amount': selectedItem.value,
-                                    'cost': selectedItem.cost * 100,
+                                    'amount': params.amount,
+                                    'cost': params.cost * 100,
+                                    'dialog': 'shop',
                                 });
                             })
                             .catch((error) => {
@@ -152,8 +153,8 @@ function Payment({ route }: any) {
                 <View style={{ marginTop: 30 }}>
                     <Image source={ImageLogoText as ImageSourcePropType} style={styles.logoImage} />
                 </View>
-                <Text style={styles.title}>You can buy Gems by GBP</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} >
+                <Text style={styles.title}>{`You can buy ${params.amount} Gems by ${params.cost}GBP`}</Text>
+                {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} >
                     {
                         items.map((item: any) => (
                             <TouchableOpacity key={item.id} style={{ flex: 1 }} onPress={() => onSelectAmount(item)}>
@@ -167,41 +168,6 @@ function Payment({ route }: any) {
                             </TouchableOpacity>
                         ))
                     }
-                </View>
-                {/* <View style={styles.paymentDetail}>
-                    <SelectDropdown
-                        data={emojisWithIcons}
-                        onSelect={(selectedItem, index) => {
-                            console.log(selectedItem, index);
-                            setPaymentData({
-                                amount: selectedItem.value,
-                                cost: selectedItem.cost
-                            })
-                        }}
-                        renderButton={(selectedItem, isOpened) => {
-                            return (
-                                <View style={styles.dropdownButtonStyle}>
-                                    {selectedItem && (
-                                        <Icon name={selectedItem.icon} style={styles.dropdownButtonIconStyle} />
-                                    )}
-                                    <Text style={styles.dropdownButtonTxtStyle}>
-                                        {(selectedItem && selectedItem.title) || 'Coin Amount'}
-                                    </Text>
-                                    <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} style={styles.dropdownButtonArrowStyle} />
-                                </View>
-                            );
-                        }}
-                        renderItem={(item, index, isSelected) => {
-                            return (
-                                <View style={{ ...styles.dropdownItemStyle, ...(isSelected && { backgroundColor: '#D2D9DF' }) }}>
-                                    <Icon name={item.icon} style={styles.dropdownItemIconStyle} />
-                                    <Text style={styles.dropdownItemTxtStyle}>{item.title}</Text>
-                                </View>
-                            );
-                        }}
-                        showsVerticalScrollIndicator={false}
-                        dropdownStyle={styles.dropdownMenuStyle}
-                    />
                 </View> */}
                 <CardField
                     postalCodeEnabled={true}
