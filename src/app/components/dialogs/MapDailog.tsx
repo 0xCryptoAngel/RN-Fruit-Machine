@@ -7,6 +7,8 @@ import ImageBuilding3 from '../../../static/assets/building-3.jpg';
 import ImageBuilding4 from '../../../static/assets/building-4.jpg';
 import BackArrowImg from '../../../static/assets/back_arrow_button.png';
 import BackgroundAttack from '../../../static/assets/background-attack.png';
+import ImageAttackCoin from '../../../static/assets/others/coin_attack.png';
+import ImageAttackBlock from '../../../static/assets/others/block_attack.png';
 
 import { ImageButton } from '../buttons';
 import { Divider } from '../dividers';
@@ -132,13 +134,15 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
             {/* <TouchableOpacity style={styles.modalContainer} onPressOut={() => { }} onPress={() => { }}> */}
             <View style={styles.modalView}>
                 <ImageBackground style={styles.contentContainer} source={BackgroundAttack as ImageSourcePropType} resizeMode='cover'>
-                    <Text style={styles.alertMessage}>{`Attack on ${target}`}</Text>
+                    {/* <Text style={styles.alertMessage}>{`Attack on ${target}`}</Text> */}
+                    <ImageBackground source={( target =="coin" ? ImageAttackCoin : ImageAttackBlock) as ImageSourcePropType} style={styles.titleImage} resizeMode='contain' />
+
                     <FlatList
                         data={villages}
                         renderItem={renderItem}
                         keyExtractor={item => item.userId}
-                        numColumns={2}
-                        columnWrapperStyle={styles.row}
+                        numColumns={1}
+                        // columnWrapperStyle={styles.row}
                         contentContainerStyle={styles.list}
                     />
                     <TouchableOpacity style={styles.backArrowButton} onPress={() => onCancel()}>
@@ -281,9 +285,14 @@ const styles = StyleSheet.create({
     item: {
         flex: 1,
         margin: 5,
+        paddingHorizontal: 10,
     },
     list: {
         paddingVertical: 10,
     },
+    titleImage: {
+        width: '100%',
+        height: 150,
+    }
 });
 

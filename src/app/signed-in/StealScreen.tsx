@@ -1,15 +1,18 @@
 import { Fragment, useState, useEffect, useContext } from 'react';
 import { Platform, StyleSheet, View, ImageBackground, ImageSourcePropType } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { BackButton } from '../components/buttons';
 import background from '../../static/assets/towers/blocks_tower_background.png';
-import Tower from '../components/tower';
+import Steal from '../components/steal';
 import { UserContext } from '../App';
 
 import { getUser } from '../services/gameService';
 
-function TowerScreen() {
+function StealScreen() {
 
     const user = useContext(UserContext);
+    const route = useRoute();
+    const { email }: any = route.params;
 
     const [playerData, setPlayerData]: any = useState({
         level: 3,
@@ -45,7 +48,7 @@ function TowerScreen() {
     return (
         <Fragment>
             <ImageBackground style={styles.container} source={background as ImageSourcePropType}>
-                <Tower level={30} blocks={250} />
+                <Steal targetId={email} />
                 <BackButton style={{ position: 'absolute', zIndex: 10, right: 10, top: 10 }} />
             </ImageBackground>
         </Fragment>
@@ -62,4 +65,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TowerScreen;
+export default StealScreen;

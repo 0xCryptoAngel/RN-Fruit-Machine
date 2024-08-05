@@ -4,7 +4,7 @@ import { StyleSheet, Text, TextInput, View, Modal, Button, TouchableOpacity, Ima
 import staticImage from '../../../static/assets/golden-ticket-small.png';
 import BackgroundInvite from '../../../static/assets/background-invite.jpg'
 
-import { ImageButton } from '../buttons';
+import { ImageButton, BackButton } from '../buttons';
 
 const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
 
@@ -53,11 +53,12 @@ const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
                             <View style={styles.alertButton}>
                                 <ImageButton title="INVITE" onPress={() => handleInvite()} />
                             </View>
-                            <View style={styles.alertButton}>
+                            {/* <View style={styles.alertButton}>
                                 <ImageButton title="BACK" onPress={() => onCancel()} />
-                            </View>
+                            </View> */}
                         </View>
                     </View>
+                    <BackButton style={{ position: 'absolute', zIndex: 10, right: 5, top: 5 }} onPress={() => onCancel() }/>
                 </ImageBackground>
             </View>
             {/* </TouchableOpacity> */}

@@ -51,7 +51,9 @@ const styles = StyleSheet.create({
     },
     valueText: {
         position: 'absolute',
-        left: '45%',
+        width: '100%',
+        textAlign: 'center',
+        // left: '45%',
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold',

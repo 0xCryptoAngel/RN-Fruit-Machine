@@ -31,12 +31,12 @@ const CARDS = [
         image: ImageCardStealCoin,
         count: 0,
     },
-    // {
-    //     key: 'steal_block',
-    //     name: 'Steal Block',
-    //     image: ImageCardStealBlock,
-    //     count: 0,
-    // },
+    {
+        key: 'steal_block',
+        name: 'Steal Block',
+        image: ImageCardStealBlock,
+        count: 0,
+    },
     // {
     // key: steal_time_keeper,
     //     name: 'Time Keeper',

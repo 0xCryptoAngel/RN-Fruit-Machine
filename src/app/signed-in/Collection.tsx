@@ -13,7 +13,8 @@ import { CARDS } from '../constants';
 import { getUser, updateUser } from '../services/gameService';
 
 function CollectionScreen() {
-
+    
+    const user = useContext(UserContext);
     const navigation: any = useNavigation();
     const numColumns = 2;
     const [playerData, setPlayerData]: any = useState({});
@@ -21,8 +22,13 @@ function CollectionScreen() {
     const [isVisibleMap, setVisibleMap] = useState(false);
     const [target, setTarget] = useState('Coin');
     const [isVisibleResult, setVisibleResult] = useState(false);
-
-    const user = useContext(UserContext);
+    const [resultData, setResultData] = useState([
+        {
+            name: 'Coin',
+            description: 'You can use coin to buy cards',
+            amount: 34500,
+        }
+    ]);
 
     useEffect(() => {
         let isMounted = true;
@@ -56,7 +62,7 @@ function CollectionScreen() {
 
         console.log('player data', playerData.cardInfo);
 
-        const updatedCards: any = CARDS.map((card: any) => {
+        const updatedCards: any = CARDS.filter((item: any) => !item.key.includes('block') || item.key.includes('steal')).map((card: any) => {
 
             return {
                 ...card,
@@ -67,13 +73,7 @@ function CollectionScreen() {
         setCards(updatedCards);
     }, [playerData]);
 
-    const [resultData, setResultData] = useState([
-        {
-            name: 'Coin',
-            description: 'You can use coin to buy cards',
-            amount: 34500,
-        }
-    ]);
+   
 
     const openMapDailog = (target: string) => {
         setTarget(target);
@@ -162,40 +162,49 @@ function CollectionScreen() {
         console.log('params from map dialog', params);
         
         if (target == "Coin") {
-            const currentCoins = params.coins;// random building number
-            const stealAmount = Math.floor(currentCoins * 0.1);
-            await updateUser(user?.email, {
-                coins: playerData.coins + stealAmount,
-            });
+            navigation.navigate('Steal', { email: params.email });
+            return;
 
-            await updateUser(params.email, {
-                coins: currentCoins - stealAmount,
-            });
+            // const currentCoins = params.coins;// random building number
+            // const stealAmount = Math.floor(currentCoins * 0.1);
+            // await updateUser(user?.email, {
+            //     coins: playerData.coins + stealAmount,
+            // });
 
-            setPlayerData({
-                ...playerData,
-                coins: playerData.coins + stealAmount,
-            });
-            setResultData([
-                {
-                    name: 'Coin',
-                    description: 'You stole the coins',
-                    amount: stealAmount,
-                }
-            ])
+            // await updateUser(params.email, {
+            //     coins: currentCoins - stealAmount,
+            // });
+
+            // setPlayerData({
+            //     ...playerData,
+            //     coins: playerData.coins + stealAmount,
+            // });
+            // setResultData([
+            //     {
+            //         name: 'Coin',
+            //         description: 'You stole the coins',
+            //         amount: stealAmount,
+            //     }
+            // ])
         }
         if (target == "Block") {
-
-            const stealAmount = params.block ? Math.floor(params.block * 0.10) : 0;
+            console.log('steal block', params);
+            
+            let stealAmount = 0;
+            if(params.block >= 1){
+                stealAmount = Math.floor(params.block * 0.10);
+                stealAmount = Math.max(1, stealAmount);
+            }
             let updatedBlock = playerData.block + stealAmount;
             let updatedLevel = playerData.level;
             if (updatedBlock > playerData.level * 10) {
-                updatedBlock = 0;
+                updatedBlock = 0;// level up
                 updatedLevel = updatedLevel + 1; // level up
+                updatedLevel = Math.min(40, updatedLevel); // level ended
             }
             await updateUser(user?.email, {
                 block: updatedBlock,
-                level: updatedBlock
+                level: updatedLevel
             });
 
             await updateUser(params.email, {
@@ -213,7 +222,8 @@ function CollectionScreen() {
                     description: 'You stole the blocks',
                     amount: stealAmount,
                 }
-            ])
+            ]);
+            navigation.navigate('Tower');
         }
         setVisibleResult(true);
     }
@@ -290,7 +300,7 @@ const styles = StyleSheet.create({
     gridItem: {
         flex: 1,
         margin: 10,
-        backgroundColor: '#ccc',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         // borderRadius: 10,
         overflow: 'hidden',
         elevation: 5,

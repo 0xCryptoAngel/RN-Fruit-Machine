@@ -3,11 +3,14 @@ import { Platform, StyleSheet, View, ImageBackground, ImageSourcePropType } from
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 
-import { ImageButton } from '../components/buttons';
-import background from '../../static/assets/golden_splash.jpg';
+import { ImageButton, GameButton, BackButton } from '../components/buttons';
+// import background from '../../static/assets/golden_splash.jpg';
+import background from '../../static/assets/default/block_bandit_logo.png';
+import ImagePlay from '../../static/assets/default/play_button.png';
+import ImageExit from '../../static/assets/default/exit.png';
 
 function Home() {
-    
+
     const navigation: any = useNavigation();
     async function signOut() {
         // setSigningOut(true);
@@ -18,10 +21,10 @@ function Home() {
         <Fragment>
             <ImageBackground style={styles.container} source={background as ImageSourcePropType}>
                 <View style={styles.buttons}>
-                    <ImageButton title={"Play Now"} onPress={() => navigation.navigate('Game')} style={{ marginVertical: 10, }} />
-                    <ImageButton title={"Settings"} onPress={() => navigation.navigate('Settings')} style={{ marginBottom: 10, }} />
-                    <ImageButton title={"Log Out"} onPress={() => signOut()} style={{ marginBottom: 30, }} />
+                    <GameButton background={ImagePlay} title={"SPIN"} onPress={() => navigation.navigate('Game')} disabled={false} style={{ width: 300, height: 100, marginBottom: 50 }} />
+                    {/* <ImageButton title={"Log Out"} onPress={() => signOut()} style={{ marginBottom: 30, }} /> */}
                 </View>
+                <BackButton style={{ position: 'absolute', zIndex: 10, right: 10, top: 10 }} buttonImage={ImageExit} onPress={() => signOut()} />
             </ImageBackground>
         </Fragment>
     );

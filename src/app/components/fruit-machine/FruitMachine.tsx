@@ -18,7 +18,7 @@ import ImageBlockBak from '../../../static/assets/block_counter.png';
 import ImageSpinBack from '../../../static/assets/spin-bar.png';
 import ImageGoldenTicketBlank from '../../../static/assets/golden-ticket-blank.png';
 import ImageShieldBlank from '../../../static/assets/shield-blank.png';
-import ImageLogoText from '../../../static/assets/logo-text.png';
+import ImageLogoText from '../../../static/assets/default/logo-text.png';
 import ImageMyVillage from '../../../static/assets/myvillage.png';
 import ImageArrowDown from '../../../static/assets/arrow.png';
 
@@ -41,7 +41,7 @@ const fruitList = [
     {
         name: 'Golden ticket',
         value: 'Golden ticket',
-        image: require('../../../static/assets/golden-ticket.png'),
+        image: require('../../../static/assets/fruits/block_reel.png'),
     },
     {
         name: 'Thief',
@@ -767,6 +767,7 @@ const styles = StyleSheet.create({
         width: 64,
         height: 64,
         marginVertical: 0,
+        // resizeMode: 'contain'
     },
     counterContainer: {
         flexDirection: 'row',
@@ -897,7 +898,7 @@ const styles = StyleSheet.create({
     },
     logoImage: {
         width: 300,
-        height: 70,
+        height: 50,
     },
    
 });

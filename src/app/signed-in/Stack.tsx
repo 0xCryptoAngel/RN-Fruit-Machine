@@ -12,6 +12,7 @@ import Payment from './Payment';
 import VillageScreen from './Village';
 import CollectionScreen from './Collection';
 import TowerScreen from './TowerScreen';
+import StealScreen from './StealScreen';
 
 
 const Stack = createStackNavigator();
@@ -94,6 +95,11 @@ const SignedIn = () => {
         name="Tower"
         component={TowerScreen}
         options={{ headerShown: false, title: appSettings.t('MyTower') }}
+      />
+      <Stack.Screen
+        name="Steal"
+        component={StealScreen}
+        options={{ headerShown: false, title: appSettings.t('Steal') }}
       />
 
     </Stack.Navigator>

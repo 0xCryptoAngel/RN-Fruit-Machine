@@ -9,7 +9,7 @@ import { UserContext } from '../App';
 
 import { getUser, updateUser } from '../services/gameService';
 
-import { BackButton, ImageButton } from '../components/buttons';
+import { BackButton, ImageButton, GameButton } from '../components/buttons';
 
 import { CARDS } from '../constants';
 
@@ -20,6 +20,9 @@ import ImageBuildingResource from '../../static/assets/castles/castles_resource.
 import ImageBuildingAttack from '../../static/assets/castles/castles_attack.png';
 import ImageArrowLeft from '../../static/assets/arrow_left.png';
 import ImageArrowRight from '../../static/assets/arrow_right.png';
+import ImageGenerate from '../../static/assets/default/generate_button.png';
+import ImagePerks from '../../static/assets/default/perks_button.png';
+import ImageTower from '../../static/assets/default/towers_button.png';
 
 import ResultDialog from '../components/dialogs/ResultDialog';
 import CoinBar from '../components/custom/CoinBar';
@@ -213,14 +216,17 @@ function VillageScreen() {
                             <ImageBackground style={styles.arrowImage} source={ImageArrowRight as ImageSourcePropType} resizeMode='contain' />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ width: 200, }}>
+                    <View style={{ width: 300, }}>
                         {/* <Text style={styles.priceText}>{`Cost: ${buildings[buildingIndex].boxCost}`}</Text> */}
-                        <ImageButton title={"Generate"} onPress={onBuyCard} style={{ marginVertical: 10, }} />
+                        {/* <ImageButton title={"Generate"} onPress={onBuyCard} style={{ marginVertical: 10, }} /> */}
+                        <GameButton background={ImageGenerate} title={"Generate"} onPress={onBuyCard} disabled={false} style={{ width: 300, height: 100, marginBottom: 10 }} />
                     </View>
                 </View>
                 <View style={styles.buttons}>
-                    <ImageButton title={"COLLECTIONS"} onPress={() => navigation.navigate('Collection')} style={{ marginBottom: 10, }} />
-                    <ImageButton title={"MY TOWER"} onPress={() => navigation.navigate('Tower')} style={{ marginBottom: 10, }} />
+                    {/* <ImageButton title={"COLLECTIONS"} onPress={() => navigation.navigate('Collection')} style={{ marginBottom: 10, }} /> */}
+                    <GameButton background={ImagePerks} title={"SPIN"} onPress={() => navigation.navigate('Collection')} disabled={false} style={{ width: 300, height: 100, marginBottom: 0 }} />
+                    {/* <ImageButton title={"MY TOWER"} onPress={() => navigation.navigate('Tower')} style={{ marginBottom: 10, }} /> */}
+                    <GameButton background={ImageTower} title={"My Tower"} onPress={() => navigation.navigate('Tower')} disabled={false} style={{ width: 300, height: 100, marginBottom: 0 }} />
                 </View>
                 <BackButton style={{ position: 'absolute', zIndex: 10, right: 10, top: 10 }} />
             </ImageBackground>

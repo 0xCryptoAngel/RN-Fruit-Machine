@@ -12,8 +12,10 @@ const CharacterInfo: React.FC<CharacterInfoProps> = ({ name, level, defencePower
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{name}</Text>
-      <Text style={styles.leveltText}>Level: {level}</Text>
-      <Text style={styles.defenceText}>Shield: {defencePower}</Text>
+      <View>
+        <Text style={styles.leveltText}>Level: {level}</Text>
+        <Text style={styles.defenceText}>Shield: {defencePower}</Text>
+      </View>
       <TouchableOpacity style={styles.attackButton} onPress={onAttack}>
         <Text style={styles.attackText}>ATTACK</Text>
       </TouchableOpacity>
@@ -23,16 +25,20 @@ const CharacterInfo: React.FC<CharacterInfoProps> = ({ name, level, defencePower
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   text: {
-    fontSize: 20,
+    fontSize: 24,
     marginVertical: 5,
     color: '#ab7fff',
     fontWeight: 'bold',
+    width: '30%',
   },
   leveltText: {
     fontSize: 16,
@@ -50,7 +56,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#03dddf',
     borderRadius: 5,
-    width: '100%',
+    width: 150,
     // justifyContent: 'center',
     alignItems: 'center'
   },

@@ -44,8 +44,9 @@ const styles = StyleSheet.create({
   modalView: {
     margin: 20,
     backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 30,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -59,15 +60,16 @@ const styles = StyleSheet.create({
   titleText: {
     marginBottom: 15,
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333',  // Custom color for title
   },
   descriptionText: {
-    marginBottom: 15,
+    marginBottom: 30,
     textAlign: 'center',
     fontSize: 16,
-    color: '#666',  // Custom color for description
+    color: '#111',  // Custom color for description
+    fontWeight: '600',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+    fontSize: 22,
     fontWeight: 'bold',
   },
 });

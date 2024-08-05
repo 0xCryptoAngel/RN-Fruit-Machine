@@ -4,12 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 
 import BuyNow from '../../../static/assets/back_arrow_button.png';
 
-function BackButton({ onPress, style }: any) {
+function BackButton({ onPress, style, buttonImage }: any) {
     const navigation: any = useNavigation();
    
     return (
         <TouchableOpacity style={[styles.container, style]} onPress={() => onPress ? onPress() : navigation.goBack()}>
-            <ImageBackground style={styles.button} source={BuyNow as ImageSourcePropType} resizeMode='contain'></ImageBackground>
+            <ImageBackground style={styles.button} source={ buttonImage || BuyNow as ImageSourcePropType} resizeMode='contain'></ImageBackground>
         </TouchableOpacity>
     );
 }
