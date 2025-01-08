@@ -11,9 +11,9 @@ interface CharacterInfoProps {
 const CharacterInfo: React.FC<CharacterInfoProps> = ({ name, level, defencePower, onAttack }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{name}</Text>
-      <View>
-        <Text style={styles.leveltText}>Level: {level}</Text>
+      <Text style={styles.nameText}>{name}</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.levelText}>Level: {level}</Text>
         <Text style={styles.defenceText}>Shield: {defencePower}</Text>
       </View>
       <TouchableOpacity style={styles.attackButton} onPress={onAttack}>
@@ -25,46 +25,54 @@ const CharacterInfo: React.FC<CharacterInfoProps> = ({ name, level, defencePower
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 25,
+    backgroundColor: '#f5f5f5', // Light background for contrast
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: '#ff4757', // Distinct border color for a game feel
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  text: {
-    fontSize: 24,
+    justifyContent: 'space-between',
     marginVertical: 5,
-    color: '#ab7fff',
-    fontWeight: 'bold',
-    width: '30%',
   },
-  leveltText: {
-    fontSize: 16,
-    color: '#699dfc',
-    fontWeight: '700',
+  nameText: {
+    fontSize: 26,
+    color: '#333', // Darker text color for contrast against light container
+    fontWeight: 'bold',
+    width: '35%',
+  },
+  infoContainer: {
+    width: '40%',
+  },
+  levelText: {
+    fontSize: 18,
+    color: '#0dcaf0', // Bright color for level to keep a game-like appearance
+    fontWeight: '600',
+    marginBottom: 5,
   },
   defenceText: {
-    fontSize: 16,
-    color: '#fb6c23',
-    fontWeight: '700',
-
+    fontSize: 18,
+    color: '#ffa502', // Vibrant color for defence
+    fontWeight: '600',
   },
   attackButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#03dddf',
-    borderRadius: 5,
-    width: 150,
-    // justifyContent: 'center',
-    alignItems: 'center'
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#ff6b81',
+    borderRadius: 10,
+    alignItems: 'center',
   },
   attackText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff'
-  }
+    color: '#ffffff',
+  },
 });
 
 export default CharacterInfo;

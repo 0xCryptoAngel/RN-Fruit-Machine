@@ -137,14 +137,6 @@ const Steal: React.FC<StealProps> = ({ targetId, targetItem }) => {
 
         const stealAmount = Math.round(targetData?.coins * params.percent / 100 / 100) * 100;
 
-        // await updateUser(user?.email, {
-        //     coins: userData.coins + stealAmount,
-        // });
-
-        // await updateUser(targetId, {
-        //     coins: targetData.coins - stealAmount,
-        // });
-
         setPlayerData({
             ...userData,
             coins: userData.coins + stealAmount,
@@ -169,7 +161,7 @@ const Steal: React.FC<StealProps> = ({ targetId, targetItem }) => {
     const GridItem = ({ item }: any) => (
         <View style={styles.gridItem}>
             <TouchableOpacity key={item.title} style={styles.coinItem} onPress={() => onSelectCard(item)}>
-                <ImageBackground source={item.image} style={styles.spinImage} >
+                <ImageBackground source={item.image} style={styles.buttonImage} >
                     <Text style={styles.price}>{visibleNumber ? item.id : `?`}</Text>
                 </ImageBackground>
             </TouchableOpacity>
@@ -178,8 +170,8 @@ const Steal: React.FC<StealProps> = ({ targetId, targetItem }) => {
     const BoxItem = ({ item }: any) => (
         <View style={styles.gridItem}>
             <TouchableOpacity key={item.title} style={styles.coinItem} >
-                <ImageBackground source={ImageBox as ImageSourcePropType} style={styles.spinImage} >
-                    <Text style={styles.price}>{`${item.id} (${item.percent}%)`}</Text>
+                <ImageBackground source={ImageBox as ImageSourcePropType} style={styles.boxImage} >
+                    <Text style={styles.boxText}>{`${item.id} (${item.percent}%)`}</Text>
                 </ImageBackground>
             </TouchableOpacity>
         </View>
@@ -195,10 +187,9 @@ const Steal: React.FC<StealProps> = ({ targetId, targetItem }) => {
                         ))
                     }
                 </View>
-                {/* <Text style={styles.description} > You can choose a card. The cards are random order</Text> */}
             </ScrollView >
             <View style={styles.bottomContainer}>
-                <Text style={styles.levelText} >You can choose a card. The cards are random order. If you choose 1, then it opens chest 1.</Text>
+                <Text style={styles.levelText} >Choose a card at random. If you select a numbered card, the corresponding chest will open. However, if you select an 'X,' your turn will end</Text>
                 <View style={styles.cards}>
                     {cards.map((item: any, index: number) => (
                         <GridItem key={index} item={item} />
@@ -262,11 +253,18 @@ const styles = StyleSheet.create({
     levelText: {
         width: '100%',
         textAlign: 'center',
-        backgroundColor: '#f80',
-        paddingVertical: 20,
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff'
+        backgroundColor: '#ff6e40', // Softer, modern orange color
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        fontSize: 20,
+        fontWeight: '600',
+        color: '#ffffff',
+        borderRadius: 8, // Rounded corners for a modern look
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+        elevation: 3,
     },
     cards: {
         flexDirection: 'row',
@@ -297,19 +295,33 @@ const styles = StyleSheet.create({
     coinItem: {
         alignItems: 'center',
     },
-    spinImage: {
+    boxImage: {
         width: 150,
         height: 200,
-        // justifyContent: 'flex-end',
         alignItems: 'center',
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        backgroundColor: '#ffd700', 
+    },
+    boxText: {
+        color: '#333',
+        fontSize: 36,
+        fontWeight: 'bold',
+        paddingHorizontal: 10,
+        borderRadius: 3,
+        textAlign: 'center',
+    },
+    buttonImage: {
+        width: 150,
+        height: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        resizeMode: 'contain',
+        backgroundColor: '#ffd700', 
     },
     price: {
         color: '#333',
-        fontSize: 28,
+        fontSize: 36,
         fontWeight: 'bold',
-        // paddingBottom: 10,
-        // backgroundColor: '#080',
         paddingHorizontal: 10,
         borderRadius: 3,
         textAlign: 'center',

@@ -82,8 +82,12 @@ function CollectionScreen() {
 
     const onUseCard = async (params: any) => {
 
-        console.log(params);
-        console.log('used this card', params);
+        console.log('selected this card', params);
+        if((playerData.cardInfo[params.key] || 0) <= 0) {
+            console.log('No card amount');
+            return;
+        }
+
         const updatedPlayerData = {
             ...playerData,
             cardInfo: {
@@ -157,36 +161,15 @@ function CollectionScreen() {
                 console.error('Error:', error);
             });
     }
-    const onAttack = async (params: any) => {
+    const onAttackVillage = async (params: any) => {
         setVisibleMap(false);
         console.log('params from map dialog', params);
         
         if (target == "Coin") {
             navigation.navigate('Steal', { email: params.email });
             return;
-
-            // const currentCoins = params.coins;// random building number
-            // const stealAmount = Math.floor(currentCoins * 0.1);
-            // await updateUser(user?.email, {
-            //     coins: playerData.coins + stealAmount,
-            // });
-
-            // await updateUser(params.email, {
-            //     coins: currentCoins - stealAmount,
-            // });
-
-            // setPlayerData({
-            //     ...playerData,
-            //     coins: playerData.coins + stealAmount,
-            // });
-            // setResultData([
-            //     {
-            //         name: 'Coin',
-            //         description: 'You stole the coins',
-            //         amount: stealAmount,
-            //     }
-            // ])
         }
+        
         if (target == "Block") {
             console.log('steal block', params);
             
@@ -252,7 +235,7 @@ function CollectionScreen() {
                 </View>
                 <BackButton style={{ position: 'absolute', zIndex: 10, right: 5, top: 5 }} />
             </ImageBackground>
-            <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onAttack(params)} onCancel={() => setVisibleMap(false)} />
+            <MapDialog isOpen={isVisibleMap} email={user?.email} target={target} onOK={(params: any) => onAttackVillage(params)} onCancel={() => setVisibleMap(false)} />
             <ResultDialog isOpen={isVisibleResult} data={resultData} onCancel={() => setVisibleResult(false)} />
 
         </Fragment>
@@ -301,7 +284,6 @@ const styles = StyleSheet.create({
         flex: 1,
         margin: 10,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        // borderRadius: 10,
         overflow: 'hidden',
         elevation: 5,
         padding: 5,

@@ -216,16 +216,10 @@ function VillageScreen() {
                             <ImageBackground style={styles.arrowImage} source={ImageArrowRight as ImageSourcePropType} resizeMode='contain' />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ width: 300, }}>
-                        {/* <Text style={styles.priceText}>{`Cost: ${buildings[buildingIndex].boxCost}`}</Text> */}
-                        {/* <ImageButton title={"Generate"} onPress={onBuyCard} style={{ marginVertical: 10, }} /> */}
-                        <GameButton background={ImageGenerate} title={"Generate"} onPress={onBuyCard} disabled={false} style={{ width: 300, height: 100, marginBottom: 10 }} />
-                    </View>
                 </View>
                 <View style={styles.buttons}>
-                    {/* <ImageButton title={"COLLECTIONS"} onPress={() => navigation.navigate('Collection')} style={{ marginBottom: 10, }} /> */}
-                    <GameButton background={ImagePerks} title={"SPIN"} onPress={() => navigation.navigate('Collection')} disabled={false} style={{ width: 300, height: 100, marginBottom: 0 }} />
-                    {/* <ImageButton title={"MY TOWER"} onPress={() => navigation.navigate('Tower')} style={{ marginBottom: 10, }} /> */}
+                    <GameButton background={ImageGenerate} title={"Generate"} onPress={onBuyCard} disabled={false} style={{ width: 300, height: 100, marginBottom: 5 }} />
+                    <GameButton background={ImagePerks} title={"Perks"} onPress={() => navigation.navigate('Collection')} disabled={false} style={{ width: 300, height: 100, marginBottom: 0 }} />
                     <GameButton background={ImageTower} title={"My Tower"} onPress={() => navigation.navigate('Tower')} disabled={false} style={{ width: 300, height: 100, marginBottom: 0 }} />
                 </View>
                 <BackButton style={{ position: 'absolute', zIndex: 10, right: 10, top: 10 }} />
@@ -276,24 +270,22 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        // justifyContent: 'center',
         alignItems: 'center',
-        padding: 5,
+        padding: 3,
     },
     castleImage: {
-        // width: '100%',
-        width: 300,
-        height: 400,
+        width: 250,
+        height: 450,
         resizeMode: 'cover'
     },
     arrowButton: {
-        width: 50,
-        height: 80,
+        width: 30,
+        height: 50,
         // backgroundColor: '#f1f1f1'
     },
     arrowImage: {
-        width: 50,
-        height: 80,
+        width: 30,
+        height: 50,
         resizeMode: 'contain',
     },
     status: {

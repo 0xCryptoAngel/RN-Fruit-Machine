@@ -137,7 +137,7 @@ const Tower: React.FC<TowerProps> = ({ level, blocks, backgroundImage }) => {
                 ))}
             </ScrollView >
             <View style={styles.bottomContainer}>
-                <Text style={styles.levelText} >{`${playerData?.block}/${playerData?.level * 10}`}</Text>
+                <Text style={styles.levelText} >{`${playerData?.block || '0'}/${(playerData?.level || 0) * 10}`}</Text>
                 <View style={styles.cards}>
                     {cards.map((item: any, index: number) => (
                         <GridItem key={index} item={item} />

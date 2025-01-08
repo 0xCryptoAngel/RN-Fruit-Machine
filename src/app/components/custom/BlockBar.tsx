@@ -22,7 +22,7 @@ const BlockBar: React.FC<BlockBarProps> = ({ currentAmount, targetAmount }) => {
 const styles = StyleSheet.create({
   background: {
     // width: '100%',
-    width: 200,
+    width: 300,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',

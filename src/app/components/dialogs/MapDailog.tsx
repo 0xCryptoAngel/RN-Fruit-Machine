@@ -29,53 +29,12 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
             level: 3,
         },
     ]);
-    const buildings = [
-        {
-            type: 'building',
-            title: 'Building 1',
-            value: 'building1',
-            image: ImageBuilding1
-        },
-        {
-            type: 'building',
-            title: 'Building 2',
-            value: 'building2',
-            image: ImageBuilding2
-        },
-        {
-            type: 'building',
-            title: 'Building 3',
-            value: 'building3',
-            image: ImageBuilding3
-        },
-        {
-            type: 'building',
-            title: 'Building 4',
-            value: 'building4',
-            image: ImageBuilding4
-        },
-
-    ]
+   
     const [formData, setFormData] = useState({
         selectedVillage: 'None',
         selectedBuilding: 'None',
     });
-    const handleSelect = async (village: any, building: any) => {
-        console.log(village, building);
-        setFormData({
-            ...formData,
-            ...village,
-            selectedVillage: village.userId,
-            selectedBuilding: building.value
-        });
-        // onOK(building);
-        console.log({
-            ...formData,
-            ...village,
-            selectedVillage: village.userId,
-            selectedBuilding: building.value
-        })
-    }
+    
     const handleAttack = async (village: any) => {
         console.log('village', village);
         setFormData({
@@ -131,10 +90,8 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
 
     return (<>
         <Modal visible={isOpen} animationType="fade" transparent={true} onRequestClose={() => { /*onCancel()*/ }}>
-            {/* <TouchableOpacity style={styles.modalContainer} onPressOut={() => { }} onPress={() => { }}> */}
             <View style={styles.modalView}>
                 <ImageBackground style={styles.contentContainer} source={BackgroundAttack as ImageSourcePropType} resizeMode='cover'>
-                    {/* <Text style={styles.alertMessage}>{`Attack on ${target}`}</Text> */}
                     <ImageBackground source={( target =="coin" ? ImageAttackCoin : ImageAttackBlock) as ImageSourcePropType} style={styles.titleImage} resizeMode='contain' />
 
                     <FlatList
@@ -142,7 +99,6 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
                         renderItem={renderItem}
                         keyExtractor={item => item.userId}
                         numColumns={1}
-                        // columnWrapperStyle={styles.row}
                         contentContainerStyle={styles.list}
                     />
                     <TouchableOpacity style={styles.backArrowButton} onPress={() => onCancel()}>
@@ -150,7 +106,6 @@ const MapDialog = ({ isOpen, target, email, onOK, onCancel }: any) => {
                     </TouchableOpacity>
                 </ImageBackground>
             </View>
-            {/* </TouchableOpacity> */}
         </Modal>
     </>)
 }
@@ -179,16 +134,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     contentContainer: {
-        // flex: 1,
         width: '100%',
         height: '100%',
         resizeMode: 'cover',
-        // maxWidth: 300,
         marginTop: 10,
-        // paddingHorizontal: 20,
         elevation: 24,
         borderRadius: 2,
-        // backgroundColor: '#fda46d'
     },
     alertTitle: {
         marginHorizontal: 24,
@@ -199,21 +150,16 @@ const styles = StyleSheet.create({
     alertMessage: {
         marginTop: 24,
         marginRight: 24,
-        // marginBottom: 24,
         fontSize: 24,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         color: "#f00",
         textAlign: 'center',
-        // paddingBottom: 10,
-        // borderBottomColor: '#ccc',
-        // borderBottomWidth: 1,
     },
     alertButtonGroup: {
         marginTop: 0,
         marginRight: 0,
         marginBottom: 8,
-        // marginLeft: 24,
         display: "flex",
         flexDirection: 'column',
         justifyContent: "space-between"
@@ -237,7 +183,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        // flexWrap: 'wrap',
         width: '100%',
         paddingVertical: 5,
         borderBottomColor: '#888',
