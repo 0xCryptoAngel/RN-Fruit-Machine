@@ -385,8 +385,8 @@ const FruitMachine = () => {
 
     const onBuyCoinAndSpin = async (params: any) => {
         console.log('buy spins', params);
-        
-        const recentData: any = await getUser(user?.email);        
+
+        const recentData: any = await getUser(user?.email);
         setPlayerData({
             ...playerData,
             gems: recentData.coins - params.cost,
@@ -699,17 +699,18 @@ const FruitMachine = () => {
             </ImageBackground>
 
             <GameButton background={ImageSpin} title={"SPIN"} onPress={spin} disabled={spinning} style={{ width: 300, height: 100 }} />
-            <GameButton background={ImageArrowDown} title={"Village"} onPress={() => navigation.navigate('Village')} disabled={spinning} style={{ width: 100, height: 50 }} />
+            <GameButton background={ImageArrowDown} title={"Village"} onPress={() => navigation.navigate('Village')} disabled={spinning} style={{ width: 100, height: 40 }} />
 
             <View style={{ position: 'absolute', top: 10, right: 10 }}>
                 <GameButton background={ImageShop} title={"SHOP"} onPress={() => setVisible(true)} disabled={spinning} />
-            </View>
-            <View style={{ position: 'absolute', top: 60, right: 10 }}>
                 <GameButton background={ImageBonus} title={"BONUS"} onPress={() => setVisibleInvite(true)} disabled={spinning} />
+                <ShieldBar currentAmount={playerData.shield} targetAmount={100} />
+            </View>
+
+            {/* <View style={{ position: 'absolute', top: 60, right: 10 }}>
             </View>
             <View style={{ position: 'absolute', top: 120, right: 10 }}>
-                 <ShieldBar currentAmount={playerData.shield} targetAmount={100} />       
-            </View>
+            </View> */}
 
             <ShopDialog isOpen={isVisible} data={playerData} onOK={(params: any) => onBuyCoinAndSpin(params)} onCancel={() => setVisible(false)} />
             <SpinsOutDialog isOpen={isVisibleSpinsOut} onOK={() => setVisible(true)} onCancel={() => setVisibleSpinsOut(false)} />
@@ -802,6 +803,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginTop: 10,
         marginBottom: 5,
+        paddingRight: 70,
     },
     status: {
         width: '100%',
@@ -900,7 +902,7 @@ const styles = StyleSheet.create({
         width: 300,
         height: 50,
     },
-   
+
 });
 
 export default FruitMachine;

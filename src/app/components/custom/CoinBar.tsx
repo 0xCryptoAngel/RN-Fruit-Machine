@@ -21,7 +21,8 @@ const CoinBar: React.FC<CoinBarProps> = ({ coinAmount, coinIcon, backgroundImage
 
 const styles = StyleSheet.create({
   background: {
-    width: 300,
+    width: '100%',
+    // width: 300,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',

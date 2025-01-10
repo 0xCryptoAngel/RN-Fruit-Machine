@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     },
     spinImage: {
         width: 250,
-        height: 300,
+        height: 200,
         justifyContent: 'flex-end',
         alignItems: 'center',
         resizeMode: 'contain'
@@ -252,20 +252,20 @@ const styles = StyleSheet.create({
 
     contentContainer: {
         marginTop: 10,
-        paddingHorizontal: 10,
+        paddingHorizontal: 5,
     },
     items: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         flexWrap: 'wrap',
     },
     gridItem: {
         flex: 1,
-        margin: 10,
+        margin: 5,
         padding: 5,
         overflow: 'hidden',
-        flexBasis: '45%'
+        flexBasis: '40%'
     },
     backArrowButton: {
         position: 'absolute',

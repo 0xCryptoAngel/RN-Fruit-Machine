@@ -8,9 +8,10 @@ import { ImageButton, BackButton } from '../buttons';
 
 const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
 
-    const [formData, setFormData]: any = useState({
+
+    const [formData, setFormData] = useState({
         email: 'dearfriend@gmail.com',
-        message: "Hi, \nI would like to invite you on Golden Ticket App.\n Enjoy now!",
+        message: `Hi there,\nI’m inviting you to join me on the Golden Ticket app!\nEarn rewards, have fun, and experience something amazing.\nDon’t miss out!`,
     });
 
     const handleInvite = async () => {
@@ -51,14 +52,14 @@ const InviteDialog = ({ isOpen, onOK, onCancel }: any) => {
                         </View>
                         <View style={styles.alertButtonGroup}>
                             <View style={styles.alertButton}>
-                                <ImageButton title="INVITE" onPress={() => handleInvite()} />
+                                <ImageButton title="Send Invite" onPress={() => handleInvite()} />
                             </View>
                             {/* <View style={styles.alertButton}>
-                                <ImageButton title="BACK" onPress={() => onCancel()} />
+                                <ImageButton title="Cancel" onPress={() => onCancel()} />
                             </View> */}
                         </View>
                     </View>
-                    <BackButton style={{ position: 'absolute', zIndex: 10, right: 5, top: 5 }} onPress={() => onCancel() }/>
+                    <BackButton style={{ position: 'absolute', zIndex: 10, right: 5, top: 5 }} onPress={() => onCancel()} />
                 </ImageBackground>
             </View>
             {/* </TouchableOpacity> */}
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignContent: 'center',
-        backgroundColor: '#fff'
+        backgroundColor: '#FFFFFF', // White background
     },
     modalContainer: {
         backgroundColor: "transparent",
@@ -87,46 +88,42 @@ const styles = StyleSheet.create({
     modalView: {
         flex: 1,
         alignContent: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     alert: {
         flex: 1,
         width: '100%',
-        // maxWidth: 300,
         marginTop: 100,
         paddingHorizontal: 20,
         elevation: 24,
-        borderRadius: 2,
-        // backgroundColor: '#fff'
+        borderRadius: 12,
+        backgroundColor: '#FFFFFF', // White
     },
     alertTitle: {
         marginHorizontal: 24,
         fontWeight: "bold",
         fontSize: 24,
-        color: "#000"
+        color: "#333333", // Dark gray
     },
     alertMessage: {
-        // marginLeft: 24,
         marginRight: 24,
         marginBottom: 24,
-        fontSize: 28,
-        fontFamily: 'Roboto',
-        fontWeight: 'bold',
-        color: "#fff",
-        textAlign: 'center'
+        fontSize: 18,
+        fontWeight: '600',
+        color: "#555555", // Medium gray
+        textAlign: 'center',
     },
     alertButtonGroup: {
         marginTop: 0,
         marginRight: 0,
         marginBottom: 8,
-        // marginLeft: 24,
         display: "flex",
         flexDirection: 'column',
-        justifyContent: "space-between"
+        justifyContent: "space-between",
     },
     alertButton: {
         marginTop: 12,
-        marginRight: 8
+        marginRight: 8,
     },
     alertIcon: {
         width: 100,
@@ -140,8 +137,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontSize: 14,
         fontWeight: 'bold',
-        fontFamily: 'Roboto',
-        color: '#0f8',
+        color: '#6200EE', // Deep Purple
     },
     input: {
         height: 40,
@@ -150,11 +146,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        fontFamily: 'Roboto',
-        fontWeight: '600',
-        backgroundColor: '#F2F2F2',
-        color: '#333333',
+        borderBottomColor: '#6200EE', // Deep Purple
+        backgroundColor: '#F7F7F7', // Light Gray
+        color: '#555555', // Medium Gray
     },
     message: {
         marginTop: 3,
@@ -162,22 +156,18 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        fontFamily: 'Roboto',
-        fontWeight: '800',
-        alignItems: 'flex-start',
+        borderBottomColor: '#6200EE', // Deep Purple
+        backgroundColor: '#F7F7F7', // Light Gray
+        color: '#555555', // Medium Gray
         textAlignVertical: 'top',
-        backgroundColor: '#FFFACD',
-        color: '#000080',
     },
     body: {
         flex: 1,
         width: '100%',
-        // marginTop: 20,
         elevation: 24,
         borderRadius: 2,
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        backgroundColor: '#FFFFFF', // White
     },
-
 });
 

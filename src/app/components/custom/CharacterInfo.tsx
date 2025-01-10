@@ -25,30 +25,30 @@ const CharacterInfo: React.FC<CharacterInfoProps> = ({ name, level, defencePower
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingVertical: 25,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
     backgroundColor: '#f5f5f5', // Light background for contrast
     borderRadius: 12,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 10,
-    elevation: 8,
+    shadowRadius: 5,
+    elevation: 5,
     borderWidth: 2,
     borderColor: '#ff4757', // Distinct border color for a game feel
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 5,
+    marginVertical: 0,
   },
   nameText: {
-    fontSize: 26,
+    fontSize: 18,
     color: '#333', // Darker text color for contrast against light container
     fontWeight: 'bold',
     width: '35%',
   },
   infoContainer: {
-    width: '40%',
+    width: '30%',
   },
   levelText: {
     fontSize: 18,
@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   attackButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     backgroundColor: '#ff6b81',
     borderRadius: 10,
     alignItems: 'center',

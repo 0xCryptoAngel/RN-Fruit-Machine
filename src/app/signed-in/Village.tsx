@@ -160,12 +160,13 @@ function VillageScreen() {
         if (cardLength == 0) { return; }
         const index = Math.floor(Math.random() * cardLength);
         const cardKey = building.cards[index];
-
+        console.log('card', cardKey, playerData.cardInfo[cardKey]);
+        const updatedValue = !playerData.cardInfo[cardKey] ? 1: playerData.cardInfo[cardKey] + 1;
         updateUser(user?.email, {
             coins: playerData.coins - building.boxCost,
             cardInfo: {
                 ...playerData.cardInfo,
-                [cardKey]: playerData.cardInfo[cardKey] + 1
+                [cardKey]: updatedValue
             }
         })
             .then(() => {
@@ -176,7 +177,7 @@ function VillageScreen() {
                     coins: playerData.coins - building.boxCost,
                     cardInfo: {
                         ...playerData.cardInfo,
-                        [cardKey]: playerData.cardInfo[cardKey] + 1
+                        [cardKey]: updatedValue
                     }
                 });
 
@@ -218,11 +219,11 @@ function VillageScreen() {
                     </View>
                 </View>
                 <View style={styles.buttons}>
-                    <GameButton background={ImageGenerate} title={"Generate"} onPress={onBuyCard} disabled={false} style={{ width: 300, height: 100, marginBottom: 5 }} />
-                    <GameButton background={ImagePerks} title={"Perks"} onPress={() => navigation.navigate('Collection')} disabled={false} style={{ width: 300, height: 100, marginBottom: 0 }} />
-                    <GameButton background={ImageTower} title={"My Tower"} onPress={() => navigation.navigate('Tower')} disabled={false} style={{ width: 300, height: 100, marginBottom: 0 }} />
+                    <GameButton background={ImageGenerate} title={"Generate"} onPress={onBuyCard} disabled={false} style={{ width: 300, height: 50, marginBottom: 5 }} />
+                    <GameButton background={ImagePerks} title={"Perks"} onPress={() => navigation.navigate('Collection')} disabled={false} style={{ width: 300, height: 50, marginBottom: 0 }} />
+                    <GameButton background={ImageTower} title={"My Tower"} onPress={() => navigation.navigate('Tower')} disabled={false} style={{ width: 300, height: 50, marginBottom: 0 }} />
                 </View>
-                <BackButton style={{ position: 'absolute', zIndex: 10, right: 10, top: 10 }} />
+                <BackButton style={{ position: 'absolute', zIndex: 10, right: 5, top: 5 }} />
             </ImageBackground>
 
             <ResultDialog
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     },
     castles: {
         width: '100%',
-        height: 500,
+        height: 320,
         backgroundColor: '#fed08d',
         justifyContent: 'center',
         alignItems: 'center'

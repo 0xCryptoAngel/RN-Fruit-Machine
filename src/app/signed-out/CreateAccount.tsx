@@ -59,6 +59,17 @@ function CreateAccount(): JSX.Element {
         'shield': 0,
         'level': 1,
         'block': 5,
+        'cardInfo': {
+          coin_200k: 0,         
+          coin_2x: 0,           
+          extra_spins_20: 0,    
+          extra_spins_40: 0,    
+          shield: 0,            
+          shield_3x: 0,         
+          steal_coin: 0,        
+          steal_ticket: 0,      
+          time_keeper5: 0
+        }
       });
       setLoading(false);
 

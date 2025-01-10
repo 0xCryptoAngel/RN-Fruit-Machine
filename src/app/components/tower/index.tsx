@@ -15,11 +15,11 @@ const Tower: React.FC<TowerProps> = ({ level, blocks, backgroundImage }) => {
 
     const user = useContext(UserContext);
 
-    const screnWidth = Dimensions.get('window').width;
-    const totalBlock = 40 * 10;
+    // const screnWidth = Dimensions.get('window').width;
+    // const totalBlock = 40 * 10;
     const [size, setSize] = useState({ // block size
-        width: 70,
-        height: 70
+        width: 50,
+        height: 50
     });
     const [columns, setColumns] = useState(1);
     const [scale, setScale] = useState(1);
@@ -104,7 +104,7 @@ const Tower: React.FC<TowerProps> = ({ level, blocks, backgroundImage }) => {
             updatedPlayerData.block = (updatedPlayerData.block || 0) + 4;
         }
 
-        if (updatedPlayerData.block > updatedPlayerData.level * 10) { // Level UP
+        if (updatedPlayerData.block >= updatedPlayerData.level * 10) { // Level UP
             updatedPlayerData.level = updatedPlayerData.level + 1;
             updatedPlayerData.block = 0;
         }
@@ -121,7 +121,7 @@ const Tower: React.FC<TowerProps> = ({ level, blocks, backgroundImage }) => {
     const GridItem = ({ item }: any) => (
         <View style={styles.gridItem}>
             <TouchableOpacity key={item.title} style={styles.coinItem} onPress={() => onUseCard(item)}>
-                <ImageBackground source={item.image} style={styles.spinImage} >
+                <ImageBackground source={item.image} style={styles.spinImage} resizeMode='contain'>
                     <Text style={styles.price}>{`${item.count}`}</Text>
                 </ImageBackground>
             </TouchableOpacity>
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         width: '100%',
         textAlign: 'center',
         backgroundColor: '#f80',
-        paddingVertical: 20,
+        paddingVertical: 5,
         fontSize: 24,
         fontWeight: 'bold',
         color: '#fff'
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     },
     gridItem: {
         flex: 1,
-        margin: 10,
+        margin: 5,
         backgroundColor: '#ccc',
         // borderRadius: 10,
         overflow: 'hidden',
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: 100,
+        height: 120,
         resizeMode: 'cover',
     },
     title: {
@@ -235,17 +235,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     spinImage: {
-        width: 150,
-        height: 200,
-        justifyContent: 'flex-end',
+        width: '100%',
+        height: 120,
         alignItems: 'center',
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        justifyContent: 'flex-end',
     },
     price: {
         color: '#333',
         fontSize: 18,
-        fontWeight: '600',
-        // paddingBottom: 10,
+        fontWeight: 'bold',
         backgroundColor: '#0f0',
         paddingHorizontal: 10,
         borderRadius: 10,
