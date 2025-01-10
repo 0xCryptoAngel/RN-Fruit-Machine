@@ -19,6 +19,8 @@
 ### Web
 
 #### Development
+Node.js 16.14.0
+Java 11
 
 Run the app: `yarn web`
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
