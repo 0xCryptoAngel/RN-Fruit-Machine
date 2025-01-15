@@ -168,9 +168,9 @@ const Steal: React.FC<StealProps> = ({ targetId, targetItem }) => {
         </View>
     );
     const BoxItem = ({ item }: any) => (
-        <View style={styles.gridItem}>
+        <View style={styles.boxItem}>
             <TouchableOpacity key={item.title} style={styles.coinItem} >
-                <ImageBackground source={ImageBox as ImageSourcePropType} style={styles.boxImage} >
+                <ImageBackground source={ImageBox as ImageSourcePropType} style={styles.boxImage} resizeMode='contain'>
                     <Text style={styles.boxText}>{`${item.id} (${item.percent}%)`}</Text>
                 </ImageBackground>
             </TouchableOpacity>
@@ -253,13 +253,13 @@ const styles = StyleSheet.create({
     levelText: {
         width: '100%',
         textAlign: 'center',
-        backgroundColor: '#ff6e40', // Softer, modern orange color
+        backgroundColor: '#ff6e40',
         paddingVertical: 15,
         paddingHorizontal: 10,
         fontSize: 20,
         fontWeight: '600',
         color: '#ffffff',
-        borderRadius: 8, // Rounded corners for a modern look
+        borderRadius: 8, 
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 3 },
@@ -273,6 +273,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#ccc'
     },
     gridItem: {
+        flex: 1,
+        margin: 10,
+        backgroundColor: '#444',
+        // borderRadius: 10,
+        overflow: 'hidden',
+        elevation: 5,
+        padding: 5,
+    },
+    boxItem: {
         flex: 1,
         margin: 10,
         backgroundColor: '#444',
@@ -297,14 +306,14 @@ const styles = StyleSheet.create({
     },
     boxImage: {
         width: 150,
-        height: 200,
+        height: 150,
         alignItems: 'center',
         resizeMode: 'contain',
         backgroundColor: '#ffd700', 
     },
     boxText: {
         color: '#333',
-        fontSize: 36,
+        fontSize: 20,
         fontWeight: 'bold',
         paddingHorizontal: 10,
         borderRadius: 3,
@@ -312,7 +321,7 @@ const styles = StyleSheet.create({
     },
     buttonImage: {
         width: 150,
-        height: 200,
+        height: 150,
         justifyContent: 'center',
         alignItems: 'center',
         resizeMode: 'contain',
